@@ -46,7 +46,7 @@ The IT department said that they could easily provide this. They also said that 
 <h2>
 <a id="high-level-view-of-notification-process" class="anchor" href="#high-level-view-of-notification-process" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>High-Level View of Notification Process</h2>
 
-<p>[image]</p>
+<p><img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/High%20Level%20View.png" alt=""></p>
 
 <ol>
 <li>You start off with a Logic App the has a Timer Trigger. The default value is to run every hour.</li>
@@ -56,8 +56,9 @@ The IT department said that they could easily provide this. They also said that 
 <h3>
 <a id="lets-take-a-look-at-what-this-logic-app-does" class="anchor" href="#lets-take-a-look-at-what-this-logic-app-does" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Let’s take a look at what this Logic App does</h3>
 
-<p>If you look at the following figure there are several steps in the workflow.
-[image]</p>
+<p>If you look at the following figure there are several steps in the workflow.</p>
+
+<p><img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/Main%20Logic%20App%20process.png" alt=""></p>
 
 <p>These steps are as follows.
 1. You need to get the current UTC DateTime from an API App.  The default value is one hour previous.
@@ -77,23 +78,21 @@ The IT department said that they could easily provide this. They also said that 
 
 <p>When you create a new Logic App, your are presented with “How would you like to start?” 
 When you click inside the text box,  you have a choice of events. For this Logic App, you select “Manual – When a HTTP request is received” as shown below.
-[image]</p>
+<img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/starting.off.png" alt=""></p>
 
 <h3>
 <a id="design-view-of-your-completed-logic-app" class="anchor" href="#design-view-of-your-completed-logic-app" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Design View of your completed Logic App</h3>
 
 <p>The following figure show the design view for the Logic App, which is named DocDB.
-[image]</p>
+<img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/LogicApp.Workflow.png" alt=""></p>
 
 <p>When editing the actions in the Logic App Designer, you have the option of selecting *<em>Outputs *</em>from the Http Request or from the previous action as shown in the sendMail action below.
-[image]</p>
+<img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/choose.outputs.png" alt=""></p>
 
 <p>Before each action in your workflow,  you can make a decision; ** Add an action *<em>or *</em>Add a condition **as shown in the following figure.
-[image]</p>
+<img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/add.action.or.condition.png" alt=""></p>
 
 <p>If you select <strong>Add a condition</strong>, you are presented with a form, as shown in the following figure, to enter your logic.  This is in essence, a business rule.  If you click inside a field, you have a choice of selecting parameters from the previous action.  You can also enter the values directly.</p>
-
-<p>[image]</p>
 
 <blockquote>
 <p>TIP: You also have the capability to enter everything in Code View.</p>
@@ -268,6 +267,419 @@ If you do it in code view, then you define which properties require a value as s
 
 <p>What you are doing is creating a JSON schema. that will be passed in from the body of the Http POST.
 To fire your trigger, you will need a CallbackURL.  You will learn how to generate it further down in the tutorial.  </p>
+
+<h2>
+<a id="actions" class="anchor" href="#actions" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Actions</h2>
+
+<p>Let’s see what each action does.</p>
+
+<h3>
+<a id="getutcdate" class="anchor" href="#getutcdate" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>GetUTCDate</h3>
+
+<p>Designer View
+<img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/getutcdate.png" alt=""></p>
+
+<p>Code View
+    "GetUtcDate": {
+            "conditions": [],
+            "inputs": {
+            "method": "get",
+            "queries": {
+                "hoursBack": "@{int(triggerBody()['GetUtcDate_HoursBack'])}"
+            },
+            "uri": "<a href="https://docdbnotificationapi-debug.azurewebsites.net/api/Authorization">https://docdbnotificationapi-debug.azurewebsites.net/api/Authorization</a>"
+            },
+            "metadata": {
+            "apiDefinitionUrl": "<a href="https://docdbnotificationapi-debug.azurewebsites.net/swagger/docs/v1">https://docdbnotificationapi-debug.azurewebsites.net/swagger/docs/v1</a>"
+            },
+            "type": "Http"
+        },</p>
+
+<p>This HTTP action performs a GET operation.  It calls the API APP GetUtcDate method. The Uri uses the 'GetUtcDate_HoursBack'  property passed into the Trigger body.  The 'GetUtcDate_HoursBack' value is set in the first Logic App.  (You will learn more about the Trigger Logic App later in the tutorial.</p>
+
+<p>This action calls your API App to return the Utc Date string value.</p>
+
+<p>Operations</p>
+
+<p>Request
+    {
+        "uri": "<a href="https://docdbnotificationapi-debug.azurewebsites.net/api/Authorization">https://docdbnotificationapi-debug.azurewebsites.net/api/Authorization</a>",
+        "method": "get",
+        "queries": {
+        "hoursBack": "24"
+        }
+    }
+Response
+    {
+        "statusCode": 200,
+        "headers": {
+        "pragma": "no-cache",
+        "cache-Control": "no-cache",
+        "date": "Fri, 26 Feb 2016 15:47:33 GMT",
+        "server": "Microsoft-IIS/8.0",
+        "x-AspNet-Version": "4.0.30319",
+        "x-Powered-By": "ASP.NET"
+        },
+        "body": "Fri, 15 Jan 2016 23:47:33 GMT"
+    }</p>
+
+<p>The next step is too convert the UTC DateTime value to the Unix TimeStamp, which is a NET double type.</p>
+
+<h3>
+<a id="conversion" class="anchor" href="#conversion" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Conversion</h3>
+
+<p>Designer View
+<img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/Conversion.png" alt=""></p>
+
+<p>Code View
+    "Conversion": {
+        "conditions": [
+        {
+            "dependsOn": "GetUtcDate"
+        }
+        ],
+        "inputs": {
+        "method": "post",
+        "queries": {
+            "currentDateTime": "@{body('GetUtcDate')}"
+        },
+        "uri": "<a href="https://docdbnotificationapi-debug.azurewebsites.net/api/Conversion">https://docdbnotificationapi-debug.azurewebsites.net/api/Conversion</a>"
+        },
+        "metadata": {
+        "apiDefinitionUrl": "<a href="https://docdbnotificationapi-debug.azurewebsites.net/swagger/docs/v1">https://docdbnotificationapi-debug.azurewebsites.net/swagger/docs/v1</a>"
+        },
+        "type": "Http"
+    },</p>
+
+<p>In this step you pass in the value returned from the GetUTCDate.  There is a dependsOn condition, which means that the GetUTCDate action must complete successfully. If not then this action is skipped. </p>
+
+<p>This action calls your API App to handle the conversion.</p>
+
+<p>Operations</p>
+
+<p>Request
+    {
+        "uri": "<a href="https://docdbnotificationapi-debug.azurewebsites.net/api/Conversion">https://docdbnotificationapi-debug.azurewebsites.net/api/Conversion</a>",
+        "method": "post",
+        "queries": {
+        "currentDateTime": "Fri, 15 Jan 2016 23:47:33 GMT"
+        }
+    }<br>
+Response
+    {
+        "statusCode": 200,
+        "headers": {
+        "pragma": "no-cache",
+        "cache-Control": "no-cache",
+        "date": "Fri, 26 Feb 2016 15:47:33 GMT",
+        "server": "Microsoft-IIS/8.0",
+        "x-AspNet-Version": "4.0.30319",
+        "x-Powered-By": "ASP.NET"
+        },
+        "body": 1452901653
+    }</p>
+
+<p>In the next action, you will do a POST operation to our API App.</p>
+
+<h3>
+<a id="getdocuments" class="anchor" href="#getdocuments" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>GetDocuments</h3>
+
+<p>Designer View
+<img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/GetDocuments.png" alt=""></p>
+
+<p>Code View
+    "GetDocuments": {
+        "conditions": [
+        {
+            "dependsOn": "Conversion"
+        }
+        ],
+        "inputs": {
+        "method": "post",
+        "queries": {
+            "unixTimeStamp": "@{body('Conversion')}"
+        },
+        "uri": "<a href="https://docdbnotificationapi-debug.azurewebsites.net/api/Patient">https://docdbnotificationapi-debug.azurewebsites.net/api/Patient</a>"
+        },
+        "metadata": {
+        "apiDefinitionUrl": "<a href="https://docdbnotificationapi-debug.azurewebsites.net/swagger/docs/v1">https://docdbnotificationapi-debug.azurewebsites.net/swagger/docs/v1</a>"
+        },
+        "type": "Http"
+    },
+For the GetDocuments action you are going to pass in the response body from the Conversion action. This is a parameter in the Uri; unixTimeStamp=@{body('Conversion')}</p>
+
+<p>The QueryDocuments action does a Http POST operation to the API App. . </p>
+
+<p>The method called is <strong>QueryForNewPatientDocuments</strong></p>
+
+<p>Operations</p>
+
+<p>Request
+    {
+        "uri": "<a href="https://docdbnotificationapi-debug.azurewebsites.net/api/Patient">https://docdbnotificationapi-debug.azurewebsites.net/api/Patient</a>",
+        "method": "post",
+        "queries": {
+        "unixTimeStamp": "1452901653"
+        }
+    }</p>
+
+<p>Response
+    {
+        "statusCode": 200,
+        "headers": {
+        "pragma": "no-cache",
+        "cache-Control": "no-cache",
+        "date": "Fri, 26 Feb 2016 15:47:35 GMT",
+        "server": "Microsoft-IIS/8.0",
+        "x-AspNet-Version": "4.0.30319",
+        "x-Powered-By": "ASP.NET"
+        },
+        "body": [
+        {
+            "id": "xcda",
+            "_rid": "vCYLAP2k6gAXAAAAAAAAAA==",
+            "_self": "dbs/vCYLAA==/colls/vCYLAP2k6gA=/docs/vCYLAP2k6gAXAAAAAAAAAA==/",
+            "_ts": 1454874620,
+            "_etag": "\"00007d01-0000-0000-0000-56b79ffc0000\"",
+            "resourceType": "Patient",
+            "text": {
+            "status": "generated",
+            "div": "</p><div>\n      \n      <p>Henry Levin the 7th</p>\n    \n    </div>"
+            },
+            "identifier": [
+            {
+                "use": "usual",
+                "type": {
+                "coding": [
+                    {
+                    "system": "<a href="http://hl7.org/fhir/v2/0203">http://hl7.org/fhir/v2/0203</a>",
+                    "code": "MR"
+                    }
+                ]
+                },
+                "system": "urn:oid:2.16.840.1.113883.19.5",
+                "value": "12345"
+            }
+            ],
+            "active": true,
+            "name": [
+            {
+                    "family": [
+                        "Levin"
+                    ],
+                    "given": [
+                        "Henry"
+                    ]
+                }
+            ],
+            "gender": "male",
+            "birthDate": "1932-09-24",
+            "managingOrganization": {
+                "reference": "Organization/2.16.840.1.113883.19.5",
+                "display": "Good Health Clinic"
+            }
+        },
+
+<p>The next action is to save the documents to Google Drive. </p>
+
+<h3>
+<a id="create-file" class="anchor" href="#create-file" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Create File</h3>
+
+<p>Designer View
+<img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/CreateFile.png" alt=""></p>
+
+<p>Code View
+    "Create_file": {
+        "conditions": [
+        {
+            "dependsOn": "GetDocuments"
+        }
+        ],
+        "inputs": {
+        "body": "@decodeDataUri(concat('data:application/octet-stream,',encodeURIComponent(string(body('GetDocuments')))))",
+        "host": {
+            "api": {
+            "runtimeUrl": "<a href="https://logic-apis-westus.azure-apim.net/apim/googledrive">https://logic-apis-westus.azure-apim.net/apim/googledrive</a>"
+            },
+            "connection": {
+            "name": "<a href="https://github.com/parameters" class="user-mention">@parameters</a>('$connections')['googledrive']['connectionId']"
+            }
+        },
+        "method": "post",
+        "path": "/datasets/default/files",
+        "queries": {
+            "folderPath": "/Patient",
+            "name": "Patient_@{guid()}.json"
+        }
+        },
+        "type": "ApiConnection"
+    },</p>
+
+<p>The code is generated from action in the designer. You don’t have to modify the code.</p>
+
+<p>If you are not familiar with using the Google Drive Api,  you can view the documentation <a href="https://azure.microsoft.com/en-us/documentation/articles/create-api-googledrive/">here</a>.</p>
+
+<p>Operations</p>
+
+<p>Request</p>
+
+<pre><code>"host": {
+    "api": {
+        "runtimeUrl": "https://logic-apis-westus.azure-apim.net/apim/googledrive"
+    },
+    "connection": {
+        "name": "subscriptions/f1334a6f-c079-4e5d-b002-e80326d2492c/resourceGroups/Api-Default-Central-US/providers/Microsoft.Web/connections/F6805CA2-462C-4D28-86D7-4C4E6953EC0F"
+    }
+    },
+    "method": "post",
+    "path": "/datasets/default/files",
+    "queries": {
+    "folderPath": "/Patient",
+    "name": "Patient_47a2a0dc-640d-4f01-be38-c74690d085cb.json"
+    },
+    "body": {
+    "$content-encoding": null,
+    "$content-type": "application/octet-stream;charset=us-ascii",
+    "$content": "W3siaWQiOiJ4Y2RhIiwiX3JpZCI6InZDWUxBUDJrNmdBWEFBQUFBQUFBQUE9PSIsIl9zZWxmIjoiZGJzL3ZDWUxBQT09L2NvbGxzL3ZDWUxBUDJrNmdBPS9kb2NzL3ZDWUxBUDJrNmdBWEFBQUFBQUFBQUE9PS8iLCJfdHMiOjE0NTQ4NzQ2MjAsIl9ldGFnIjoiXCIwMDAwN2QwMS0wMDAwLTAwMDAtMDAwMC01NmI3OWZmYzAwMDBcIiIsInJlc291cmNlVHlwZSI6IlBhdGllbnQiLCJ0ZXh0Ijp7InN0YXR1cyI6ImdlbmVyYXRlZCIsImRpdiI6IjxkaXY+XG4gICAgICBcbiAgICAgIDxwPkhlbnJ5IExldmluIHRoZSA3dGg8L3A+XG4gICAgXG4gICAgPC9kaXY+In0sImlkZW50aWZpZXIiOlt7InVzZSI6InVzdWFsIiwidHlwZSI6eyJjb2RpbmciOlt7InN5c3RlbSI6Imh0dHA6Ly9obDcub3JnL2ZoaXIvdjIvMDIwMyIsImNvZGUiOiJNUiJ9XX0sInN5c3RlbSI6InVybjpvaWQ6Mi4xNi44NDAuMS4xMTM4ODMuMTkuNSIsInZhbHVlIjoiMTIzNDUifV0sImFjdGl2ZSI6dHJ1ZSwibmFtZSI6W3siZmFtaWx5IjpbIkxldmluIl0sImdpdmVuIjpbIkhlbnJ5Il19XSwiZ2VuZGVyIjoibWFsZSIsImJpcnRoRGF0ZSI6IjE5MzItMDktMjQiLCJtYW5hZ2luZ09yZ2FuaXphdGlvbiI6eyJyZWZlcmVuY2UiOiJPcmdhbml6YXRpb24vMi4xNi44NDAuMS4xMTM4ODMuMTkuNSIsImRpc3BsYXkiOiJHb29kIEhlYWx0aCBDbGluaWMifX0seyJpZCI6InVzMDEiLCJfcmlkIjoidkNZTEFQMms2Z0FaQUFBQUFBQUFBQT09IiwiX3NlbGYiOiJkYnMvdkNZTEFBPT0vY29sbHMvdkNZTEFQMms2Z0E9L2RvY3MvdkNZTEFQMms2Z0FaQUFBQUFBQUFBQT09LyIsIl90cyI6MTQ1NDg3NDYyMCwiX2V0YWciOiJcIjAwMDA3ZjAxLTAwMDAtMDAwMC0wMDAwLTU2Yjc5ZmZjMDAwMFwiIiwicmVzb3VyY2VUeXBlIjoiUGF0aWVudC......
+</code></pre>
+
+<p>Response
+    {
+        "statusCode": 200,
+        "headers": {
+        "pragma": "no-cache",
+        "x-ms-request-id": "2b2f7c57-2623-4d71-8e53-45c26b30ea9d",
+        "cache-Control": "no-cache",
+        "date": "Fri, 26 Feb 2016 15:47:36 GMT",
+        "set-Cookie": "ARRAffinity=29e552cea7db23196f7ffa644003eaaf39bc8eb6dd811911f669d13ab7424faf;Path=/;Domain=127.0.0.1",
+        "server": "Microsoft-HTTPAPI/2.0",
+        "x-AspNet-Version": "4.0.30319",
+        "x-Powered-By": "ASP.NET"
+        },
+        "body": {
+        "Id": "0B0nBzHyMV-_NRGRDcDNMSFAxWFE",
+        "Name": "Patient_47a2a0dc-640d-4f01-be38-c74690d085cb.json",
+        "DisplayName": "Patient_47a2a0dc-640d-4f01-be38-c74690d085cb.json",
+        "Path": "/Patient/Patient_47a2a0dc-640d-4f01-be38-c74690d085cb.json",
+        "LastModified": "2016-02-26T15:47:36.215Z",
+        "Size": 65647,
+        "MediaType": "application/octet-stream",
+        "IsFolder": false,
+        "ETag": "\"c-g_a-1OtaH-kNQ4WBoXLp3Zv9s/MTQ1NjUwMTY1NjIxNQ\"",
+        "FileLocator": "0B0nBzHyMV-_NRGRDcDNMSFAxWFE"
+        }
+    }</p>
+
+<p>Your last step is to send an email notification</p>
+
+<h3>
+<a id="sendemail" class="anchor" href="#sendemail" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>sendEmail</h3>
+
+<p>Designer View
+<img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/SendEmail.png" alt=""></p>
+
+<p>Code View
+    "sendMail": {
+        "conditions": [
+        {
+            "dependsOn": "GetDocuments"
+        }
+        ],
+        "inputs": {
+        "body": "api_user=@{triggerBody()['sendgridUsername']}&amp;api_key=@{triggerBody()['sendgridPassword']}&amp;from=@{parameters('fromAddress')}&amp;to=@{triggerBody()['EmailTo']}&amp;subject=@{triggerBody()['Subject']}&amp;text=@{int(length(body('GetDocuments')))} Documents Found",
+        "headers": {
+            "Content-type": "application/x-www-form-urlencoded"
+        },
+        "method": "POST",
+        "uri": "<a href="https://api.sendgrid.com/api/mail.send.json">https://api.sendgrid.com/api/mail.send.json</a>"
+        },
+        "type": "Http"
+    }</p>
+
+<p>In this action you send an email notification.  You are using <a href="https://sendgrid.com/marketing/sendgrid-services?cvosrc=PPC.Bing.sendgrib&amp;cvo_cid=SendGrid%20-%20US%20-%20Brand%20-%20(English)&amp;mc=Paid%20Search&amp;mcd=BingAds&amp;keyword=sendgrib&amp;network=o&amp;matchtype=e&amp;mobile=&amp;content=&amp;search=1&amp;utm_source=bing&amp;utm_medium=cpc&amp;utm_term=%5Bsendgrib%5D&amp;utm_content=%21acq%21v2%2134335083397-8303227637-1649139544&amp;utm_campaign=SendGrid+-+US+-+Brand+-+%28English%29">SendGrid</a>.   </p>
+
+<p>The code for this was generated using a Template for Logic App and SendGrid that is in the template Github repository.</p>
+
+<p>The Http operation is a POST. </p>
+
+<p>The authorization parameters are in the trigger properties</p>
+
+<pre><code>},
+    "sendgridPassword": {
+         "type": "SecureString"
+     },
+     "sendgridUsername": {
+        "type": "String"
+     }
+
+    In addition, other parameters are static values set in the Parameters section of the Logic App. These are:
+    },
+    "toAddress": {
+        "defaultValue": "XXXX@XXXX.com",
+        "type": "String"
+    },
+    "fromAddress": {
+        "defaultValue": "XXX@msn.com",
+        "type": "String"
+    },
+    "emailBody": {
+        "defaultValue": "@{string(concat(int(length(actions('QueryDocuments').outputs.body)) Records Found),'/n', actions('QueryDocuments').outputs.body)}",
+        "type": "String"
+    },
+</code></pre>
+
+<p>The emailBody is concatenating the number of Documents returned from the query, which can be “0” or more, along with,  “Records Found”.  The rest of the parameters are set from the Trigger parameters.</p>
+
+<p>This action depends on the *<em>GetDocuments *</em>action.</p>
+
+<p>Operations
+Request
+    {
+        "uri": "<a href="https://api.sendgrid.com/api/mail.send.json">https://api.sendgrid.com/api/mail.send.json</a>",
+        "method": "POST",
+        "headers": {
+        "Content-type": "application/x-www-form-urlencoded"
+        },
+        "body": "api_user=<a href="mailto:azure_9d8ef133bd48205fbc841ef82aaa6808@azure.com">azure_9d8ef133bd48205fbc841ef82aaa6808@azure.com</a>&amp;api_key=Biz@Talk&amp;from=<a href="mailto:hse@msn.com">hse@msn.com</a>&amp;to=<a href="mailto:hedidin@edidingroup.net">hedidin@edidingroup.net</a>&amp;subject=New Patients&amp;text=37 Documents Found"
+    }</p>
+
+<p>Response
+    {
+        "statusCode": 200,
+        "headers": {
+        "connection": "keep-alive",
+        "x-Frame-Options": "DENY,DENY",
+        "access-Control-Allow-Origin": "<a href="https://sendgrid.com">https://sendgrid.com</a>",
+        "date": "Fri, 26 Feb 2016 15:47:35 GMT",
+        "server": "nginx"
+        },
+        "body": {
+        "message": "success"
+        }
+    }
+Lastly you want to be able to see the results from your Logic App on the Azure Portal. To do that, you add a parameter to the outputs section.
+    "outputs": {
+        "Results": {
+            "type": "String",
+            "value": "@{int(length(actions('QueryDocuments').outputs.body))} Records Found"
+        }</p>
+
+<p>This returns the same value that is sent in the email body. The following figure shows an example where “37 Records Found”
+<img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/Logic.App.run.png" alt=""></p>
+
+<h2>
+<a id="metrics" class="anchor" href="#metrics" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Metrics</h2>
+
+<p>You can configure Monitoring for the main Logic App in the portal. This would allow you to view the Run Latency and other events as show in the following figure.
+[image]</p>
+
+<h2>
+<a id="docdb-trigger" class="anchor" href="#docdb-trigger" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>DocDb Trigger</h2>
+
+<p>This Logic App is the trigger that starts the workflow on your main Logic App.</p>
+
+<p>The following figure shows the Designer View.
+<img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/Trigger.Recurrence.png" alt=""></p>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/HEDIDIN/DocDbNotifications">Notifications for new or modified DocumentDB Resources</a> is maintained by <a href="https://github.com/HEDIDIN">HEDIDIN</a>.</span>
