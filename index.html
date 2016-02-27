@@ -33,10 +33,12 @@
 
 <blockquote>
 <p>DocumentDB is the repository for HL7 FHIR documents.  Let’s assume that your DocumentDB Database combined with API and Logic App make up an HL7 FHIR Server.  A Healthcare facility is storing Patient data in the DocumentDB ‘Patients’ database. 
-There are several Collections within the Patient database; Clinical, Identification, etc.. Patient information falls under Identification.  You have a collection named “Patient”.
-The Cardiology department is tracking personal heath and exercise data.  Searching for new or modified Patient records is time consuming.  They asked the IT department if there was a way that they could receive a notification for new or modified Patient records.<br>
-The IT department said that they could easily provide this. They also said that they could push the documents to Google Drive so the Cardiology department could easily access them.</p>
+There are several Collections within the Patient database; Clinical, Identification, etc.. Patient information falls under Identification.  You have a collection named “Patient”.</p>
 </blockquote>
+
+<p>The Cardiology department is tracking personal heath and exercise data.  Searching for new or modified Patient records is time consuming.  They asked the IT department if there was a way that they could receive a notification for new or modified Patient records.  </p>
+
+<p>The IT department said that they could easily provide this. They also said that they could push the documents to Google Drive so the Cardiology department could easily access them.</p>
 
 <h2>
 <a id="this-is-how-the-it-department-solved-the-problem" class="anchor" href="#this-is-how-the-it-department-solved-the-problem" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>This is how the IT department solved the problem.</h2>
@@ -77,20 +79,24 @@ The IT department said that they could easily provide this. They also said that 
 <a id="lets-start-with-the-main-logic-app" class="anchor" href="#lets-start-with-the-main-logic-app" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Let’s start with the main Logic App.</h3>
 
 <p>When you create a new Logic App, your are presented with “How would you like to start?” 
-When you click inside the text box,  you have a choice of events. For this Logic App, you select “Manual – When a HTTP request is received” as shown below.
-<img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/starting.off.png" alt=""></p>
+When you click inside the text box,  you have a choice of events. For this Logic App, you select “Manual – When a HTTP request is received” as shown below.</p>
+
+<p><img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/starting.off.png" alt=""></p>
 
 <h3>
 <a id="design-view-of-your-completed-logic-app" class="anchor" href="#design-view-of-your-completed-logic-app" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Design View of your completed Logic App</h3>
 
-<p>The following figure show the design view for the Logic App, which is named DocDB.
-<img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/LogicApp.Workflow.png" alt=""></p>
+<p>The following figure show the design view for the Logic App, which is named DocDB.</p>
 
-<p>When editing the actions in the Logic App Designer, you have the option of selecting *<em>Outputs *</em>from the Http Request or from the previous action as shown in the sendMail action below.
-<img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/choose.outputs.png" alt=""></p>
+<p><img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/LogicApp.Workflow.png" alt=""></p>
 
-<p>Before each action in your workflow,  you can make a decision; ** Add an action *<em>or *</em>Add a condition **as shown in the following figure.
-<img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/add.action.or.condition.png" alt=""></p>
+<p>When editing the actions in the Logic App Designer, you have the option of selecting *<em>Outputs *</em>from the Http Request or from the previous action as shown in the sendMail action below.</p>
+
+<p><img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/choose.outputs.png" alt=""></p>
+
+<p>Before each action in your workflow,  you can make a decision; ** Add an action *<em>or *</em>Add a condition **as shown in the following figure.</p>
+
+<p><img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/add.action.or.condition.png" alt=""></p>
 
 <p>If you select <strong>Add a condition</strong>, you are presented with a form, as shown in the following figure, to enter your logic.  This is in essence, a business rule.  If you click inside a field, you have a choice of selecting parameters from the previous action.  You can also enter the values directly.</p>
 
