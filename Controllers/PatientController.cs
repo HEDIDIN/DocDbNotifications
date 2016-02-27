@@ -34,7 +34,7 @@ namespace DocDBNotificationApi.Controllers
             var context = new DocumentDbContext();
             var filterQuery = string.Format(InvariantCulture, "SELECT * FROM Patient p WHERE p._ts >=  {0}",
                 unixTimeStamp);
-            var options = new FeedOptions {MaxItemCount = -1};
+            var options = new FeedOptions {MaxItemCount = 10};
 
 
             var collectionLink = UriFactory.CreateDocumentCollectionUri(DocumentDbContext.DatabaseId,
