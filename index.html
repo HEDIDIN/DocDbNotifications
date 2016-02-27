@@ -249,16 +249,17 @@ When you click inside the text box,  you have a choice of events. For this Logic
 </blockquote>
 
 <p>As mentioned previously, you can use the designer to assign parameters or do it in code view.
-If you do it in code view, then you define which properties require a value as shown in the following code sample. 
-    "triggers": {
-        "manual": {
-            "inputs": {
-            "schema": {
-                "properties": {
-            "Subject": {
-                "type" : "String"   </p>
+If you do it in code view, then you define which properties require a value as shown in the following code sample. </p>
 
-<pre><code>        }
+<pre><code>"triggers": {
+    "manual": {
+        "inputs": {
+        "schema": {
+            "properties": {
+        "Subject": {
+            "type" : "String"   
+
+        }
         },
             "required": [
         "Subject"
@@ -285,21 +286,23 @@ To fire your trigger, you will need a CallbackURL.  You will learn how to genera
 <p>Designer View
 <img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/getutcdate.png" alt=""></p>
 
-<p>Code View
-    "GetUtcDate": {
-            "conditions": [],
-            "inputs": {
-            "method": "get",
-            "queries": {
-                "hoursBack": "@{int(triggerBody()['GetUtcDate_HoursBack'])}"
-            },
-            "uri": "<a href="https://docdbnotificationapi-debug.azurewebsites.net/api/Authorization">https://docdbnotificationapi-debug.azurewebsites.net/api/Authorization</a>"
-            },
-            "metadata": {
-            "apiDefinitionUrl": "<a href="https://docdbnotificationapi-debug.azurewebsites.net/swagger/docs/v1">https://docdbnotificationapi-debug.azurewebsites.net/swagger/docs/v1</a>"
-            },
-            "type": "Http"
-        },</p>
+<p>Code View</p>
+
+<pre><code>"GetUtcDate": {
+        "conditions": [],
+        "inputs": {
+        "method": "get",
+        "queries": {
+            "hoursBack": "@{int(triggerBody()['GetUtcDate_HoursBack'])}"
+        },
+        "uri": "https://docdbnotificationapi-debug.azurewebsites.net/api/Authorization"
+        },
+        "metadata": {
+        "apiDefinitionUrl": "https://docdbnotificationapi-debug.azurewebsites.net/swagger/docs/v1"
+        },
+        "type": "Http"
+    },
+</code></pre>
 
 <p>This HTTP action performs a GET operation.  It calls the API APP GetUtcDate method. The Uri uses the 'GetUtcDate_HoursBack'  property passed into the Trigger body.  The 'GetUtcDate_HoursBack' value is set in the first Logic App.  (You will learn more about the Trigger Logic App later in the tutorial.</p>
 
@@ -307,27 +310,32 @@ To fire your trigger, you will need a CallbackURL.  You will learn how to genera
 
 <p>Operations</p>
 
-<p>Request
-    {
-        "uri": "<a href="https://docdbnotificationapi-debug.azurewebsites.net/api/Authorization">https://docdbnotificationapi-debug.azurewebsites.net/api/Authorization</a>",
-        "method": "get",
-        "queries": {
-        "hoursBack": "24"
-        }
+<p>Request</p>
+
+<pre><code>{
+    "uri": "https://docdbnotificationapi-debug.azurewebsites.net/api/Authorization",
+    "method": "get",
+    "queries": {
+    "hoursBack": "24"
     }
-Response
-    {
-        "statusCode": 200,
-        "headers": {
-        "pragma": "no-cache",
-        "cache-Control": "no-cache",
-        "date": "Fri, 26 Feb 2016 15:47:33 GMT",
-        "server": "Microsoft-IIS/8.0",
-        "x-AspNet-Version": "4.0.30319",
-        "x-Powered-By": "ASP.NET"
-        },
-        "body": "Fri, 15 Jan 2016 23:47:33 GMT"
-    }</p>
+}
+</code></pre>
+
+<p>Response</p>
+
+<pre><code>{
+    "statusCode": 200,
+    "headers": {
+    "pragma": "no-cache",
+    "cache-Control": "no-cache",
+    "date": "Fri, 26 Feb 2016 15:47:33 GMT",
+    "server": "Microsoft-IIS/8.0",
+    "x-AspNet-Version": "4.0.30319",
+    "x-Powered-By": "ASP.NET"
+    },
+    "body": "Fri, 15 Jan 2016 23:47:33 GMT"
+}
+</code></pre>
 
 <p>The next step is too convert the UTC DateTime value to the Unix TimeStamp, which is a NET double type.</p>
 
@@ -337,25 +345,27 @@ Response
 <p>Designer View
 <img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/Conversion.png" alt=""></p>
 
-<p>Code View
-    "Conversion": {
-        "conditions": [
-        {
-            "dependsOn": "GetUtcDate"
-        }
-        ],
-        "inputs": {
-        "method": "post",
-        "queries": {
-            "currentDateTime": "@{body('GetUtcDate')}"
-        },
-        "uri": "<a href="https://docdbnotificationapi-debug.azurewebsites.net/api/Conversion">https://docdbnotificationapi-debug.azurewebsites.net/api/Conversion</a>"
-        },
-        "metadata": {
-        "apiDefinitionUrl": "<a href="https://docdbnotificationapi-debug.azurewebsites.net/swagger/docs/v1">https://docdbnotificationapi-debug.azurewebsites.net/swagger/docs/v1</a>"
-        },
-        "type": "Http"
-    },</p>
+<p>Code View</p>
+
+<pre><code>"Conversion": {
+    "conditions": [
+    {
+        "dependsOn": "GetUtcDate"
+    }
+    ],
+    "inputs": {
+    "method": "post",
+    "queries": {
+        "currentDateTime": "@{body('GetUtcDate')}"
+    },
+    "uri": "https://docdbnotificationapi-debug.azurewebsites.net/api/Conversion"
+    },
+    "metadata": {
+    "apiDefinitionUrl": "https://docdbnotificationapi-debug.azurewebsites.net/swagger/docs/v1"
+    },
+    "type": "Http"
+},
+</code></pre>
 
 <p>In this step you pass in the value returned from the GetUTCDate.  There is a dependsOn condition, which means that the GetUTCDate action must complete successfully. If not then this action is skipped. </p>
 
@@ -363,27 +373,32 @@ Response
 
 <p>Operations</p>
 
-<p>Request
-    {
-        "uri": "<a href="https://docdbnotificationapi-debug.azurewebsites.net/api/Conversion">https://docdbnotificationapi-debug.azurewebsites.net/api/Conversion</a>",
-        "method": "post",
-        "queries": {
-        "currentDateTime": "Fri, 15 Jan 2016 23:47:33 GMT"
-        }
-    }<br>
-Response
-    {
-        "statusCode": 200,
-        "headers": {
-        "pragma": "no-cache",
-        "cache-Control": "no-cache",
-        "date": "Fri, 26 Feb 2016 15:47:33 GMT",
-        "server": "Microsoft-IIS/8.0",
-        "x-AspNet-Version": "4.0.30319",
-        "x-Powered-By": "ASP.NET"
-        },
-        "body": 1452901653
-    }</p>
+<p>Request</p>
+
+<pre><code>{
+    "uri": "https://docdbnotificationapi-debug.azurewebsites.net/api/Conversion",
+    "method": "post",
+    "queries": {
+    "currentDateTime": "Fri, 15 Jan 2016 23:47:33 GMT"
+    }
+}   
+</code></pre>
+
+<p>Response</p>
+
+<pre><code>{
+    "statusCode": 200,
+    "headers": {
+    "pragma": "no-cache",
+    "cache-Control": "no-cache",
+    "date": "Fri, 26 Feb 2016 15:47:33 GMT",
+    "server": "Microsoft-IIS/8.0",
+    "x-AspNet-Version": "4.0.30319",
+    "x-Powered-By": "ASP.NET"
+    },
+    "body": 1452901653
+}
+</code></pre>
 
 <p>In the next action, you will do a POST operation to our API App.</p>
 
@@ -393,26 +408,29 @@ Response
 <p>Designer View
 <img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/GetDocuments.png" alt=""></p>
 
-<p>Code View
-    "GetDocuments": {
-        "conditions": [
-        {
-            "dependsOn": "Conversion"
-        }
-        ],
-        "inputs": {
-        "method": "post",
-        "queries": {
-            "unixTimeStamp": "@{body('Conversion')}"
-        },
-        "uri": "<a href="https://docdbnotificationapi-debug.azurewebsites.net/api/Patient">https://docdbnotificationapi-debug.azurewebsites.net/api/Patient</a>"
-        },
-        "metadata": {
-        "apiDefinitionUrl": "<a href="https://docdbnotificationapi-debug.azurewebsites.net/swagger/docs/v1">https://docdbnotificationapi-debug.azurewebsites.net/swagger/docs/v1</a>"
-        },
-        "type": "Http"
+<p>Code View</p>
+
+<pre><code>"GetDocuments": {
+    "conditions": [
+    {
+        "dependsOn": "Conversion"
+    }
+    ],
+    "inputs": {
+    "method": "post",
+    "queries": {
+        "unixTimeStamp": "@{body('Conversion')}"
     },
-For the GetDocuments action you are going to pass in the response body from the Conversion action. This is a parameter in the Uri; unixTimeStamp=@{body('Conversion')}</p>
+    "uri": "https://docdbnotificationapi-debug.azurewebsites.net/api/Patient"
+    },
+    "metadata": {
+    "apiDefinitionUrl": "https://docdbnotificationapi-debug.azurewebsites.net/swagger/docs/v1"
+    },
+    "type": "Http"
+},
+</code></pre>
+
+<p>For the GetDocuments action you are going to pass in the response body from the Conversion action. This is a parameter in the Uri; unixTimeStamp=@{body('Conversion')}</p>
 
 <p>The QueryDocuments action does a Http POST operation to the API App. . </p>
 
@@ -420,71 +438,75 @@ For the GetDocuments action you are going to pass in the response body from the 
 
 <p>Operations</p>
 
-<p>Request
-    {
-        "uri": "<a href="https://docdbnotificationapi-debug.azurewebsites.net/api/Patient">https://docdbnotificationapi-debug.azurewebsites.net/api/Patient</a>",
-        "method": "post",
-        "queries": {
-        "unixTimeStamp": "1452901653"
-        }
-    }</p>
+<p>Request</p>
 
-<p>Response
+<pre><code>{
+    "uri": "https://docdbnotificationapi-debug.azurewebsites.net/api/Patient",
+    "method": "post",
+    "queries": {
+    "unixTimeStamp": "1452901653"
+    }
+}
+</code></pre>
+
+<p>Response</p>
+
+<pre><code>{
+    "statusCode": 200,
+    "headers": {
+    "pragma": "no-cache",
+    "cache-Control": "no-cache",
+    "date": "Fri, 26 Feb 2016 15:47:35 GMT",
+    "server": "Microsoft-IIS/8.0",
+    "x-AspNet-Version": "4.0.30319",
+    "x-Powered-By": "ASP.NET"
+    },
+    "body": [
     {
-        "statusCode": 200,
-        "headers": {
-        "pragma": "no-cache",
-        "cache-Control": "no-cache",
-        "date": "Fri, 26 Feb 2016 15:47:35 GMT",
-        "server": "Microsoft-IIS/8.0",
-        "x-AspNet-Version": "4.0.30319",
-        "x-Powered-By": "ASP.NET"
+        "id": "xcda",
+        "_rid": "vCYLAP2k6gAXAAAAAAAAAA==",
+        "_self": "dbs/vCYLAA==/colls/vCYLAP2k6gA=/docs/vCYLAP2k6gAXAAAAAAAAAA==/",
+        "_ts": 1454874620,
+        "_etag": "\"00007d01-0000-0000-0000-56b79ffc0000\"",
+        "resourceType": "Patient",
+        "text": {
+        "status": "generated",
+        "div": "&lt;div&gt;\n      \n      &lt;p&gt;Henry Levin the 7th&lt;/p&gt;\n    \n    &lt;/div&gt;"
         },
-        "body": [
+        "identifier": [
         {
-            "id": "xcda",
-            "_rid": "vCYLAP2k6gAXAAAAAAAAAA==",
-            "_self": "dbs/vCYLAA==/colls/vCYLAP2k6gA=/docs/vCYLAP2k6gAXAAAAAAAAAA==/",
-            "_ts": 1454874620,
-            "_etag": "\"00007d01-0000-0000-0000-56b79ffc0000\"",
-            "resourceType": "Patient",
-            "text": {
-            "status": "generated",
-            "div": "</p><div>\n      \n      <p>Henry Levin the 7th</p>\n    \n    </div>"
-            },
-            "identifier": [
-            {
-                "use": "usual",
-                "type": {
-                "coding": [
-                    {
-                    "system": "<a href="http://hl7.org/fhir/v2/0203">http://hl7.org/fhir/v2/0203</a>",
-                    "code": "MR"
-                    }
-                ]
-                },
-                "system": "urn:oid:2.16.840.1.113883.19.5",
-                "value": "12345"
-            }
-            ],
-            "active": true,
-            "name": [
-            {
-                    "family": [
-                        "Levin"
-                    ],
-                    "given": [
-                        "Henry"
-                    ]
+            "use": "usual",
+            "type": {
+            "coding": [
+                {
+                "system": "http://hl7.org/fhir/v2/0203",
+                "code": "MR"
                 }
-            ],
-            "gender": "male",
-            "birthDate": "1932-09-24",
-            "managingOrganization": {
-                "reference": "Organization/2.16.840.1.113883.19.5",
-                "display": "Good Health Clinic"
+            ]
+            },
+            "system": "urn:oid:2.16.840.1.113883.19.5",
+            "value": "12345"
+        }
+        ],
+        "active": true,
+        "name": [
+        {
+                "family": [
+                    "Levin"
+                ],
+                "given": [
+                    "Henry"
+                ]
             }
-        },
+        ],
+        "gender": "male",
+        "birthDate": "1932-09-24",
+        "managingOrganization": {
+            "reference": "Organization/2.16.840.1.113883.19.5",
+            "display": "Good Health Clinic"
+        }
+    },
+</code></pre>
 
 <p>The next action is to save the documents to Google Drive. </p>
 
@@ -494,32 +516,34 @@ For the GetDocuments action you are going to pass in the response body from the 
 <p>Designer View
 <img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/CreateFile.png" alt=""></p>
 
-<p>Code View
-    "Create_file": {
-        "conditions": [
-        {
-            "dependsOn": "GetDocuments"
-        }
-        ],
-        "inputs": {
-        "body": "@decodeDataUri(concat('data:application/octet-stream,',encodeURIComponent(string(body('GetDocuments')))))",
-        "host": {
-            "api": {
-            "runtimeUrl": "<a href="https://logic-apis-westus.azure-apim.net/apim/googledrive">https://logic-apis-westus.azure-apim.net/apim/googledrive</a>"
-            },
-            "connection": {
-            "name": "<a href="https://github.com/parameters" class="user-mention">@parameters</a>('$connections')['googledrive']['connectionId']"
-            }
+<p>Code View</p>
+
+<pre><code>"Create_file": {
+    "conditions": [
+    {
+        "dependsOn": "GetDocuments"
+    }
+    ],
+    "inputs": {
+    "body": "@decodeDataUri(concat('data:application/octet-stream,',encodeURIComponent(string(body('GetDocuments')))))",
+    "host": {
+        "api": {
+        "runtimeUrl": "https://logic-apis-westus.azure-apim.net/apim/googledrive"
         },
-        "method": "post",
-        "path": "/datasets/default/files",
-        "queries": {
-            "folderPath": "/Patient",
-            "name": "Patient_@{guid()}.json"
+        "connection": {
+        "name": "@parameters('$connections')['googledrive']['connectionId']"
         }
-        },
-        "type": "ApiConnection"
-    },</p>
+    },
+    "method": "post",
+    "path": "/datasets/default/files",
+    "queries": {
+        "folderPath": "/Patient",
+        "name": "Patient_@{guid()}.json"
+    }
+    },
+    "type": "ApiConnection"
+},
+</code></pre>
 
 <p>The code is generated from action in the designer. You don’t have to modify the code.</p>
 
@@ -549,32 +573,34 @@ For the GetDocuments action you are going to pass in the response body from the 
     "$content": "W3siaWQiOiJ4Y2RhIiwiX3JpZCI6InZDWUxBUDJrNmdBWEFBQUFBQUFBQUE9PSIsIl9zZWxmIjoiZGJzL3ZDWUxBQT09L2NvbGxzL3ZDWUxBUDJrNmdBPS9kb2NzL3ZDWUxBUDJrNmdBWEFBQUFBQUFBQUE9PS8iLCJfdHMiOjE0NTQ4NzQ2MjAsIl9ldGFnIjoiXCIwMDAwN2QwMS0wMDAwLTAwMDAtMDAwMC01NmI3OWZmYzAwMDBcIiIsInJlc291cmNlVHlwZSI6IlBhdGllbnQiLCJ0ZXh0Ijp7InN0YXR1cyI6ImdlbmVyYXRlZCIsImRpdiI6IjxkaXY+XG4gICAgICBcbiAgICAgIDxwPkhlbnJ5IExldmluIHRoZSA3dGg8L3A+XG4gICAgXG4gICAgPC9kaXY+In0sImlkZW50aWZpZXIiOlt7InVzZSI6InVzdWFsIiwidHlwZSI6eyJjb2RpbmciOlt7InN5c3RlbSI6Imh0dHA6Ly9obDcub3JnL2ZoaXIvdjIvMDIwMyIsImNvZGUiOiJNUiJ9XX0sInN5c3RlbSI6InVybjpvaWQ6Mi4xNi44NDAuMS4xMTM4ODMuMTkuNSIsInZhbHVlIjoiMTIzNDUifV0sImFjdGl2ZSI6dHJ1ZSwibmFtZSI6W3siZmFtaWx5IjpbIkxldmluIl0sImdpdmVuIjpbIkhlbnJ5Il19XSwiZ2VuZGVyIjoibWFsZSIsImJpcnRoRGF0ZSI6IjE5MzItMDktMjQiLCJtYW5hZ2luZ09yZ2FuaXphdGlvbiI6eyJyZWZlcmVuY2UiOiJPcmdhbml6YXRpb24vMi4xNi44NDAuMS4xMTM4ODMuMTkuNSIsImRpc3BsYXkiOiJHb29kIEhlYWx0aCBDbGluaWMifX0seyJpZCI6InVzMDEiLCJfcmlkIjoidkNZTEFQMms2Z0FaQUFBQUFBQUFBQT09IiwiX3NlbGYiOiJkYnMvdkNZTEFBPT0vY29sbHMvdkNZTEFQMms2Z0E9L2RvY3MvdkNZTEFQMms2Z0FaQUFBQUFBQUFBQT09LyIsIl90cyI6MTQ1NDg3NDYyMCwiX2V0YWciOiJcIjAwMDA3ZjAxLTAwMDAtMDAwMC0wMDAwLTU2Yjc5ZmZjMDAwMFwiIiwicmVzb3VyY2VUeXBlIjoiUGF0aWVudC......
 </code></pre>
 
-<p>Response
-    {
-        "statusCode": 200,
-        "headers": {
-        "pragma": "no-cache",
-        "x-ms-request-id": "2b2f7c57-2623-4d71-8e53-45c26b30ea9d",
-        "cache-Control": "no-cache",
-        "date": "Fri, 26 Feb 2016 15:47:36 GMT",
-        "set-Cookie": "ARRAffinity=29e552cea7db23196f7ffa644003eaaf39bc8eb6dd811911f669d13ab7424faf;Path=/;Domain=127.0.0.1",
-        "server": "Microsoft-HTTPAPI/2.0",
-        "x-AspNet-Version": "4.0.30319",
-        "x-Powered-By": "ASP.NET"
-        },
-        "body": {
-        "Id": "0B0nBzHyMV-_NRGRDcDNMSFAxWFE",
-        "Name": "Patient_47a2a0dc-640d-4f01-be38-c74690d085cb.json",
-        "DisplayName": "Patient_47a2a0dc-640d-4f01-be38-c74690d085cb.json",
-        "Path": "/Patient/Patient_47a2a0dc-640d-4f01-be38-c74690d085cb.json",
-        "LastModified": "2016-02-26T15:47:36.215Z",
-        "Size": 65647,
-        "MediaType": "application/octet-stream",
-        "IsFolder": false,
-        "ETag": "\"c-g_a-1OtaH-kNQ4WBoXLp3Zv9s/MTQ1NjUwMTY1NjIxNQ\"",
-        "FileLocator": "0B0nBzHyMV-_NRGRDcDNMSFAxWFE"
-        }
-    }</p>
+<p>Response</p>
+
+<pre><code>{
+    "statusCode": 200,
+    "headers": {
+    "pragma": "no-cache",
+    "x-ms-request-id": "2b2f7c57-2623-4d71-8e53-45c26b30ea9d",
+    "cache-Control": "no-cache",
+    "date": "Fri, 26 Feb 2016 15:47:36 GMT",
+    "set-Cookie": "ARRAffinity=29e552cea7db23196f7ffa644003eaaf39bc8eb6dd811911f669d13ab7424faf;Path=/;Domain=127.0.0.1",
+    "server": "Microsoft-HTTPAPI/2.0",
+    "x-AspNet-Version": "4.0.30319",
+    "x-Powered-By": "ASP.NET"
+    },
+    "body": {
+    "Id": "0B0nBzHyMV-_NRGRDcDNMSFAxWFE",
+    "Name": "Patient_47a2a0dc-640d-4f01-be38-c74690d085cb.json",
+    "DisplayName": "Patient_47a2a0dc-640d-4f01-be38-c74690d085cb.json",
+    "Path": "/Patient/Patient_47a2a0dc-640d-4f01-be38-c74690d085cb.json",
+    "LastModified": "2016-02-26T15:47:36.215Z",
+    "Size": 65647,
+    "MediaType": "application/octet-stream",
+    "IsFolder": false,
+    "ETag": "\"c-g_a-1OtaH-kNQ4WBoXLp3Zv9s/MTQ1NjUwMTY1NjIxNQ\"",
+    "FileLocator": "0B0nBzHyMV-_NRGRDcDNMSFAxWFE"
+    }
+}
+</code></pre>
 
 <p>Your last step is to send an email notification</p>
 
@@ -584,23 +610,25 @@ For the GetDocuments action you are going to pass in the response body from the 
 <p>Designer View
 <img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/SendEmail.png" alt=""></p>
 
-<p>Code View
-    "sendMail": {
-        "conditions": [
-        {
-            "dependsOn": "GetDocuments"
-        }
-        ],
-        "inputs": {
-        "body": "api_user=@{triggerBody()['sendgridUsername']}&amp;api_key=@{triggerBody()['sendgridPassword']}&amp;from=@{parameters('fromAddress')}&amp;to=@{triggerBody()['EmailTo']}&amp;subject=@{triggerBody()['Subject']}&amp;text=@{int(length(body('GetDocuments')))} Documents Found",
-        "headers": {
-            "Content-type": "application/x-www-form-urlencoded"
-        },
-        "method": "POST",
-        "uri": "<a href="https://api.sendgrid.com/api/mail.send.json">https://api.sendgrid.com/api/mail.send.json</a>"
-        },
-        "type": "Http"
-    }</p>
+<p>Code View</p>
+
+<pre><code>"sendMail": {
+    "conditions": [
+    {
+        "dependsOn": "GetDocuments"
+    }
+    ],
+    "inputs": {
+    "body": "api_user=@{triggerBody()['sendgridUsername']}&amp;api_key=@{triggerBody()['sendgridPassword']}&amp;from=@{parameters('fromAddress')}&amp;to=@{triggerBody()['EmailTo']}&amp;subject=@{triggerBody()['Subject']}&amp;text=@{int(length(body('GetDocuments')))} Documents Found",
+    "headers": {
+        "Content-type": "application/x-www-form-urlencoded"
+    },
+    "method": "POST",
+    "uri": "https://api.sendgrid.com/api/mail.send.json"
+    },
+    "type": "Http"
+}
+</code></pre>
 
 <p>In this action you send an email notification.  You are using <a href="https://sendgrid.com/marketing/sendgrid-services?cvosrc=PPC.Bing.sendgrib&amp;cvo_cid=SendGrid%20-%20US%20-%20Brand%20-%20(English)&amp;mc=Paid%20Search&amp;mcd=BingAds&amp;keyword=sendgrib&amp;network=o&amp;matchtype=e&amp;mobile=&amp;content=&amp;search=1&amp;utm_source=bing&amp;utm_medium=cpc&amp;utm_term=%5Bsendgrib%5D&amp;utm_content=%21acq%21v2%2134335083397-8303227637-1649139544&amp;utm_campaign=SendGrid+-+US+-+Brand+-+%28English%29">SendGrid</a>.   </p>
 
@@ -639,15 +667,17 @@ For the GetDocuments action you are going to pass in the response body from the 
 <p>This action depends on the *<em>GetDocuments *</em>action.</p>
 
 <p>Operations
-Request
-    {
-        "uri": "<a href="https://api.sendgrid.com/api/mail.send.json">https://api.sendgrid.com/api/mail.send.json</a>",
-        "method": "POST",
-        "headers": {
-        "Content-type": "application/x-www-form-urlencoded"
-        },
-        "body": "api_user=<a href="mailto:azure_9d8ef133bd48205fbc841ef82aaa6808@azure.com">azure_9d8ef133bd48205fbc841ef82aaa6808@azure.com</a>&amp;api_key=Biz@Talk&amp;from=<a href="mailto:hse@msn.com">hse@msn.com</a>&amp;to=<a href="mailto:hedidin@edidingroup.net">hedidin@edidingroup.net</a>&amp;subject=New Patients&amp;text=37 Documents Found"
-    }</p>
+Request</p>
+
+<pre><code>{
+    "uri": "https://api.sendgrid.com/api/mail.send.json",
+    "method": "POST",
+    "headers": {
+    "Content-type": "application/x-www-form-urlencoded"
+    },
+    "body": "api_user=azure_9d8ef133bd48205fbc841ef82aaa6808@azure.com&amp;api_key=Biz@Talk&amp;from=hse@msn.com&amp;to=hedidin@edidingroup.net&amp;subject=New Patients&amp;text=37 Documents Found"
+}
+</code></pre>
 
 <p>Response
     {
@@ -662,13 +692,16 @@ Request
         "body": {
         "message": "success"
         }
+    }</p>
+
+<p>Lastly you want to be able to see the results from your Logic App on the Azure Portal. To do that, you add a parameter to the outputs section.</p>
+
+<pre><code>"outputs": {
+    "Results": {
+        "type": "String",
+        "value": "@{int(length(actions('QueryDocuments').outputs.body))} Records Found"
     }
-Lastly you want to be able to see the results from your Logic App on the Azure Portal. To do that, you add a parameter to the outputs section.
-    "outputs": {
-        "Results": {
-            "type": "String",
-            "value": "@{int(length(actions('QueryDocuments').outputs.body))} Records Found"
-        }</p>
+</code></pre>
 
 <p>This returns the same value that is sent in the email body. The following figure shows an example where “37 Records Found”
 <img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/Logic.App.run.png" alt=""></p>
@@ -686,6 +719,264 @@ Lastly you want to be able to see the results from your Logic App on the Azure P
 
 <p>The following figure shows the Designer View.
 <img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/Trigger.Recurrence.png" alt=""></p>
+
+<pre><code>{
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2015-08-01-preview/workflowdefinition.json#",
+    "actions": {
+    "Http": {
+        "conditions": [],
+        "inputs": {
+        "body": {
+            "EmailTo": "XXXXXX@XXXXX.net",
+            "GetUtcDate_HoursBack": "24",
+            "Subject": "New Patients",
+            "sendgridPassword": "********",
+            "sendgridUsername": "azure_9d8ef133bd48205fbc841ef82aaa6808@azure.com"
+        },
+        "method": "POST",
+        "uri": "https://prod-01.westus.logic.azure.com:443/workflows/12a1de57e46645bc9ce7a247df782887/triggers/manual/run?api-version=2015-08-01-preview&amp;sp=%2Ftriggers%2Fmanual%2Frun&amp;sv=1.0&amp;sig=ObTlihr529ATIuvuG-dhxOgBL4JZjItrvPQ8PV6973c"
+        },
+        "type": "Http"
+    }
+    },
+    "contentVersion": "1.0.0.0",
+    "outputs": {
+    "Results": {
+        "type": "String",
+        "value": "@{body('Http')['status']}"
+    }
+    },
+    "parameters": {},
+    "triggers": {
+    "recurrence": {
+        "recurrence": {
+        "frequency": "Hour",
+        "interval": 24
+        },
+        "type": "Recurrence"
+    }
+    }
+}
+</code></pre>
+
+<p>The Trigger is set for a recurrence of twenty-four hours. 
+The Action is an Http Post that uses the Callback URL for the main Logic App. 
+The body contains the parameters that are specified in the JSON Schema. </p>
+
+<p>Operations</p>
+
+<p>Request</p>
+
+<pre><code>{
+    "uri": "https://prod-01.westus.logic.azure.com:443/workflows/12a1de57e46645bc9ce7a247df782887/triggers/manual/run?api-version=2015-08-01-preview&amp;sp=%2Ftriggers%2Fmanual%2Frun&amp;sv=1.0&amp;sig=ObTlihr529ATIuvuG-dhxOgBL4JZjItrvPQ8PV6973c",
+    "method": "POST",
+    "body": {
+    "EmailTo": "hedidin@edidingroup.net",
+    "GetUtcDate_HoursBack": "24",
+    "Subject": "New Patients",
+    "sendgridPassword": "Biz@Talk",
+    "sendgridUsername": "azure_9d8ef133bd48205fbc841ef82aaa6808@azure.com"
+    }
+}
+</code></pre>
+
+<p>Response</p>
+
+<pre><code>{
+    "statusCode": 202,
+    "headers": {
+    "pragma": "no-cache",
+    "x-ms-ratelimit-remaining-workflow-writes": "7486",
+    "x-ms-ratelimit-burst-remaining-workflow-writes": "1248",
+    "x-ms-request-id": "westus:2d440a39-8ba5-4a9c-92a6-f959b8d2357f",
+    "cache-Control": "no-cache",
+    "date": "Thu, 25 Feb 2016 21:01:06 GMT"
+    }
+}
+</code></pre>
+
+<p>Now let’s look at the API App.</p>
+
+<h2>
+<a id="docdbnotificationapi" class="anchor" href="#docdbnotificationapi" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>DocDBNotificationApi</h2>
+
+<p>Although there are many operations in the app, you are only going to use three.</p>
+
+<ul>
+<li>GetUtcDate</li>
+<li>ConvertToTimeStamp</li>
+<li>QueryForNewPatientDocuments</li>
+</ul>
+
+<h3>
+<a id="docdbnotificationapi-operations" class="anchor" href="#docdbnotificationapi-operations" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>DocDBNotificationApi Operations</h3>
+
+<p>Let’s take a look at the Swagger documentation</p>
+
+<blockquote>
+<p>NOTE: To allow you to call the operations externally, you need to add a CORS allowed origin value of “*” (without quotes) in the settings of your API App as shown in the following figure.</p>
+</blockquote>
+
+<p><img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/Cors.png" alt=""></p>
+
+<p><strong>GetUtcDate</strong></p>
+
+<p><img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/getutcdateswagger.png" alt=""></p>
+
+<p><strong>ConvertToTimeStamp</strong></p>
+
+<p><img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/converion%20swagger.png" alt=""></p>
+
+<p><strong>QueryForNewPatientDocuments</strong></p>
+
+<p><img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/patientswagger.png" alt=""></p>
+
+<p>Let’s take a look at the code behind this operations</p>
+
+<p><strong>GetUtcDate</strong></p>
+
+<pre><code>    /// &lt;summary&gt;
+/// Gets the current UTC Date value
+/// &lt;/summary&gt;
+/// &lt;returns&gt;&lt;/returns&gt;
+[HttpGet]
+[Metadata("GetUtcDate", "Gets the current UTC Date value minus the Hours Back")]
+[SwaggerOperation("GetUtcDate")]
+[SwaggerResponse(HttpStatusCode.OK, type: typeof (string))]
+[SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Operation Error")]
+public string GetUtcDate(
+   [Metadata("Hours Back", "How many hours back from the current Date Time")] int hoursBack)
+{
+
+
+    return DateTime.UtcNow.AddHours(-hoursBack).ToString("r");
+}
+</code></pre>
+
+<p>This operation simply returns the returns the current UTC DateTime minus the HoursBack value.</p>
+
+<p><strong>ConvertToTimeStamp</strong></p>
+
+<pre><code>    /// &lt;summary&gt;
+    ///     Converts DateTime to double
+    /// &lt;/summary&gt;
+    /// &lt;param name="currentdateTime"&gt;&lt;/param&gt;
+    /// &lt;returns&gt;&lt;/returns&gt;
+    [Metadata("Converts Universal DateTime to number")]
+    [SwaggerResponse(HttpStatusCode.OK, null, typeof (double))]
+    [SwaggerResponse(HttpStatusCode.BadRequest, "DateTime is invalid")]
+    [SwaggerResponse(HttpStatusCode.InternalServerError)]
+    [SwaggerOperation(nameof(ConvertToTimestamp))]
+    public double ConvertToTimestamp(
+        [Metadata("currentdateTime", "DateTime value to convert")] string currentdateTime)
+    {
+        double result;
+
+        try
+        {
+            var uncoded = HttpContext.Current.Server.UrlDecode(currentdateTime);
+
+            var newDateTime = DateTime.Parse(uncoded);
+            //create Timespan by subtracting the value provided from the Unix Epoch
+            var span = newDateTime - new DateTime(1970, 1, 1, 0, 0, 0, 0).ToLocalTime();
+
+            //return the total seconds (which is a UNIX timestamp)
+            result = span.TotalSeconds;
+        }
+        catch (Exception e)
+        {
+            throw new Exception("unable to convert to Timestamp", e.InnerException);
+        }
+
+        return result;
+    }
+</code></pre>
+
+<p>This operation converts the response from the GetUtcDate operation to a double value.</p>
+
+<p><strong>QueryForNewPatientDocuments</strong></p>
+
+<pre><code>/// &lt;summary&gt;
+    ///     Query for new Patient Documents
+    /// &lt;/summary&gt;
+    /// &lt;param name="unixTimeStamp"&gt;&lt;/param&gt;
+    /// &lt;returns&gt;IList&lt;/returns&gt;
+    [Metadata("QueryForNewDocuments",
+        "Query for new Documents where the Timestamp is greater than or equal to the DateTime value in the query parameters."
+        )]
+    [SwaggerOperation("QueryForNewDocuments")]
+    [SwaggerResponse(HttpStatusCode.OK, type: typeof (Task&lt;IList&lt;Document&gt;&gt;))]
+    [SwaggerResponse(HttpStatusCode.BadRequest, "The syntax of the SQL Statement is incoreect")]
+    [SwaggerResponse(HttpStatusCode.NotFound, "No Documents were found")]
+    [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Operation Error")]
+    // ReSharper disable once ConsiderUsingAsyncSuffix
+    public IList&lt;Document&gt; QueryForNewPatientDocuments(
+        [Metadata("UnixTimeStamp", "The DateTime value used to search from")] double unixTimeStamp)
+    {
+        var context = new DocumentDbContext();
+        var filterQuery = string.Format(InvariantCulture, "SELECT * FROM Patient p WHERE p._ts &gt;=  {0}",
+            unixTimeStamp);
+        var options = new FeedOptions {MaxItemCount = -1};
+
+
+        var collectionLink = UriFactory.CreateDocumentCollectionUri(DocumentDbContext.DatabaseId,
+            DocumentDbContext.CollectionId);
+
+        var response =
+            context.Client.CreateDocumentQuery&lt;Document&gt;(collectionLink, filterQuery, options).AsEnumerable();
+
+        return response.ToList();
+}
+</code></pre>
+
+<p>This operation uses the DocumentDB NET SDK to create a document query; </p>
+
+<pre><code> CreateDocumentQuery&lt;Document&gt;(collectionLink, filterQuery, options).AsEnumerable();
+</code></pre>
+
+<p>The response from the ConvertToTimeStamp operation (unixTimeStamp) is passed in.   The operation returns a List of documents. IList</p>
+
+<p>Previously we talked about the CallbackURL.  In order to start the workflow in you main Logic App, you will need to call it using the CallbackURL.</p>
+
+<h2>
+<a id="callbackurl" class="anchor" href="#callbackurl" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>CallbackURL</h2>
+
+<p>To start off, you will need your Azure AD Token.  It can be difficult to get this token. I was looking for an easy method and Jeff Hollan, who is an Azure Logic App program manager, recommended using the <a href="http://blog.davidebbo.com/2015/01/azure-resource-manager-client.html">armclient</a>in Powershell.  You can install it following the directions provided.</p>
+
+<p>The operations you want to use are Login and Call ARM Api.</p>
+
+<p>Login: You use the same credentials for logging in to the Azure Portal. </p>
+
+<p>The Call ARM Api operation is the one that will generate your CallBackURL.</p>
+
+<p>In Powershell, you call it as follows:  </p>
+
+<pre><code>ArmClient.exe post https://management.azure.com/subscriptions/[YOUR SUBSCRIPTION ID/resourcegroups/[YOUR RESOURCE GROUP]/providers/Microsoft.Logic/workflows/[YOUR LOGIC APP NAME/triggers/manual/listcallbackurl?api-version=2015-08-01-preview
+</code></pre>
+
+<p>Your result should look like this:</p>
+
+<pre><code>https://prod-02.westus.logic.azure.com:443/workflows/508ecbba4eec4f7689422c8d7a40fbac/triggers/manual/run?api-version=2015-08-01-prevaiew&amp;sp=%2Ftriggers%2Fmanual%2Frun&amp;sv=1.0&amp;sig=XXXXXXXXXXXXXXXXXXX
+</code></pre>
+
+<p>You can use a tool like <a href="http://www.getpostman.com/">postman</a> to test you main Logic App as shown in the following figure.
+<img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/Postman.png" alt=""></p>
+
+<p>If you get an error connecting, check your CORS setting for your API App. For testing be sure to set  CORS allowed origins to “0”
+The following figure is an example:
+<img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/Cors.png" alt=""></p>
+
+<h2>
+<a id="summary" class="anchor" href="#summary" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Summary</h2>
+
+<ul>
+<li>You have learned that it is possible, to implement Notifications in DocumentDB.</li>
+<li>You discovered that by using Logic Apps, you can automate the process.</li>
+<li>By using Http you can easy consume an API App within a Logic App.</li>
+<li>How easy it is to create a CallBackURL that replaces the Http Listener.</li>
+<li>How easy it is too create custom workflows with Logic Apps Designer</li>
+<li>The key is to plan ahead and model your workflow.</li>
+</ul>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/HEDIDIN/DocDbNotifications">Notifications for new or modified DocumentDB Resources</a> is maintained by <a href="https://github.com/HEDIDIN">HEDIDIN</a>.</span>
