@@ -15,8 +15,7 @@ namespace DocDBNotificationApi.Controllers
     public class PatientController : ApiController
     {
         /// <summary>
-        ///     Query for new Patient Documents by executing a Stored Procedure
-        ///     Sproc: getNewPatientDocuments
+        ///     Query for new Patient Documents
         /// </summary>
         /// <param name="unixTimeStamp"></param>
         /// <returns>IList</returns>
