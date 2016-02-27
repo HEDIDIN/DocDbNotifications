@@ -1,2 +1,2 @@
 # DocDbNotifications
-DocumwentDB Notifications 
+DocumentDB Notifications Tutorial
