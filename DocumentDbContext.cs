@@ -41,11 +41,7 @@ namespace DocDBNotificationApi
         /// </summary>
         public static string CollectionId = ConfigurationManager.AppSettings["CollectionId"];
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public static string ProcedureId = ConfigurationManager.AppSettings["ProcedureId"];
-
+       
 
         /// <summary>
         /// Create the connection 
