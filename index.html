@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Docdbnotifications by HEDIDIN</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Docdbnotifications</h1>
+      <h2 class="project-tagline">Notifications </h2>
+      <a href="https://github.com/HEDIDIN/DocDbNotifications" class="btn">View on GitHub</a>
+      <a href="https://github.com/HEDIDIN/DocDbNotifications/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/HEDIDIN/DocDbNotifications/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="notifications-for-new-or-modified-documentdb-resources" class="anchor" href="#notifications-for-new-or-modified-documentdb-resources" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Notifications for new or modified DocumentDB Resources</h1>
+
+<p>This article came about from a question I saw posted.  The question was “Does DocumentDB support notifications for modified resources?” </p>
+
+<p>I have worked with BizTalk Server for many years, and this is a very common scenario when using the <a href="https://msdn.microsoft.com/en-us/library/bb798128.aspx">WCF LOB Adapter</a> .  So I decided to see if I could duplicate this functionality in DocumentDB for new and/ or modified documents. </p>
+
+<h2>
+<a id="you-start-off-with-a-use-cases" class="anchor" href="#you-start-off-with-a-use-cases" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>You start off with a Use Cases.</h2>
+
+<p>The following story is the Use Case for this article.</p>
+
+<blockquote>
+<p>DocumentDB is the repository for HL7 FHIR documents.  Let’s assume that your DocumentDB Database combined with API and Logic App make up an HL7 FHIR Server.  A Healthcare facility is storing Patient data in the DocumentDB ‘Patients’ database. 
+There are several Collections within the Patient database; Clinical, Identification, etc.. Patient information falls under Identification.  You have a collection named “Patient”.
+The Cardiology department is tracking personal heath and exercise data.  Searching for new or modified Patient records is time consuming.  They asked the IT department if there was a way that they could receive a notification for new or modified Patient records.<br>
+The IT department said that they could easily provide this. They also said that they could push the documents to Google Drive so the Cardiology department could easily access them.</p>
+</blockquote>
+
+<h2>
+<a id="this-is-how-the-it-department-solved-the-problem" class="anchor" href="#this-is-how-the-it-department-solved-the-problem" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>This is how the IT department solved the problem.</h2>
+
+<p>In order to create this application, I decided to model it first.  I like using Business Process Model and Notation (BPMN) because both technical and non-technical can easily understand it. I consider this a business process. </p>
+
+<h2>
+<a id="high-level-view-of-notification-process" class="anchor" href="#high-level-view-of-notification-process" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>High-Level View of Notification Process</h2>
+
+<p>[image]</p>
+
+<ol>
+<li>You start off with a Logic App the has a Timer Trigger. The default value is to run every hour.</li>
+<li>Next you do a Http Post to the Logic App which does all the work.</li>
+</ol>
+
+<h3>
+<a id="lets-take-a-look-at-what-this-logic-app-does" class="anchor" href="#lets-take-a-look-at-what-this-logic-app-does" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Let’s take a look at what this Logic App does</h3>
+
+<p>If you look at the following figure there are several steps in the workflow.
+[image]</p>
+
+<p>These steps are as follows.
+1. You need to get the current UTC DateTime from an API App.  The default value is one hour previous.
+1. Then it’s converted to a Unix Timestamp format. This is the default format for timestamps in DocumentDB.
+1. You POST the value to an API App, which does a DocumentDB query. The value is used in a query. “SELECT * FROM Patients p WHERE (p._ts &gt;= <a href="https://github.com/value" class="user-mention">@value</a>)”</p>
+
+<blockquote>
+<p>NOTE: The _ts represents the TimeStamp metadata for all DocumentDB resources.
+1. If there are documents found, the response body is sent to you Google Drive.
+1. Finally, an email is sent that notifies the recipient of the number of documents found. If no documents were found, the email body would be “0 Documents Found”. </p>
+</blockquote>
+
+<p>Now that you have an idea of what the workflow does, let’s take a look at how you implement it.</p>
+
+<h3>
+<a id="lets-start-with-the-main-logic-app" class="anchor" href="#lets-start-with-the-main-logic-app" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Let’s start with the main Logic App.</h3>
+
+<p>When you create a new Logic App, your are presented with “How would you like to start?” 
+When you click inside the text box,  you have a choice of events. For this Logic App, you select “Manual – When a HTTP request is received” as shown below.
+[image]</p>
+
+<h3>
+<a id="design-view-of-your-completed-logic-app" class="anchor" href="#design-view-of-your-completed-logic-app" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Design View of your completed Logic App</h3>
+
+<p>The following figure show the design view for the Logic App, which is named DocDB.
+[image]</p>
+
+<p>When editing the actions in the Logic App Designer, you have the option of selecting *<em>Outputs *</em>from the Http Request or from the previous action as shown in the sendMail action below.
+[image]</p>
+
+<p>Before each action in your workflow,  you can make a decision; ** Add an action *<em>or *</em>Add a condition **as shown in the following figure.
+[image]</p>
+
+<p>If you select <strong>Add a condition</strong>, you are presented with a form, as shown in the following figure, to enter your logic.  This is in essence, a business rule.  If you click inside a field, you have a choice of selecting parameters from the previous action.  You can also enter the values directly.</p>
+
+<p>[image]</p>
+
+<blockquote>
+<p>TIP: You also have the capability to enter everything in Code View.</p>
+</blockquote>
+
+<p>Let’s take a look at the completed Logic App in code view.  </p>
+
+<pre><code>{
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2015-08-01-preview/workflowdefinition.json#",
+    "actions": {
+    "Conversion": {
+        "conditions": [
+        {
+            "dependsOn": "GetUtcDate"
+        }
+        ],
+        "inputs": {
+        "method": "post",
+        "queries": {
+            "currentDateTime": "@{body('GetUtcDate')}"
+        },
+        "uri": "https://docdbnotificationapi-debug.azurewebsites.net/api/Conversion"
+        },
+        "metadata": {
+        "apiDefinitionUrl": "https://docdbnotificationapi-debug.azurewebsites.net/swagger/docs/v1"
+        },
+        "type": "Http"
+    },
+    "Create_file": {
+        "conditions": [
+        {
+            "dependsOn": "GetDocuments"
+        }
+        ],
+        "inputs": {
+        "body": "@decodeDataUri(concat('data:application/octet-stream,',encodeURIComponent(string(body('GetDocuments')))))",
+        "host": {
+            "api": {
+            "runtimeUrl": "https://logic-apis-westus.azure-apim.net/apim/googledrive"
+            },
+            "connection": {
+            "name": "@parameters('$connections')['googledrive']['connectionId']"
+            }
+        },
+        "method": "post",
+        "path": "/datasets/default/files",
+        "queries": {
+            "folderPath": "/Patient",
+            "name": "Patient_@{guid()}.json"
+        }
+        },
+        "type": "ApiConnection"
+    },
+    "GetDocuments": {
+        "conditions": [
+        {
+            "dependsOn": "Conversion"
+        }
+        ],
+        "inputs": {
+        "method": "post",
+        "queries": {
+            "unixTimeStamp": "@{body('Conversion')}"
+        },
+        "uri": "https://docdbnotificationapi-debug.azurewebsites.net/api/Patient"
+        },
+        "metadata": {
+        "apiDefinitionUrl": "https://docdbnotificationapi-debug.azurewebsites.net/swagger/docs/v1"
+        },
+        "type": "Http"
+    },
+    "GetUtcDate": {
+        "conditions": [],
+        "inputs": {
+        "method": "get",
+        "queries": {
+            "hoursBack": "@{int(triggerBody()['GetUtcDate_HoursBack'])}"
+        },
+        "uri": "https://docdbnotificationapi-debug.azurewebsites.net/api/Authorization"
+        },
+        "metadata": {
+        "apiDefinitionUrl": "https://docdbnotificationapi-debug.azurewebsites.net/swagger/docs/v1"
+        },
+        "type": "Http"
+    },
+    "sendMail": {
+        "conditions": [
+        {
+            "dependsOn": "GetDocuments"
+        }
+        ],
+        "inputs": {
+        "body": "api_user=@{triggerBody()['sendgridUsername']}&amp;api_key=@{triggerBody()['sendgridPassword']}&amp;from=@{parameters('fromAddress')}&amp;to=@{triggerBody()['EmailTo']}&amp;subject=@{triggerBody()['Subject']}&amp;text=@{int(length(body('GetDocuments')))} Documents Found",
+        "headers": {
+            "Content-type": "application/x-www-form-urlencoded"
+        },
+        "method": "POST",
+        "uri": "https://api.sendgrid.com/api/mail.send.json"
+        },
+        "type": "Http"
+    }
+    },
+    "contentVersion": "1.0.0.0",
+    "outputs": {
+    "Results": {
+        "type": "String",
+        "value": "@{int(length(body('GetDocuments')))} Records Found"
+    }
+    },
+    "parameters": {
+    "$connections": {
+        "defaultValue": {},
+        "type": "Object"
+    },
+    "fromAddress": {
+        "defaultValue": "XXX@XXX.com",
+        "type": "String"
+    },
+    "toAddress": {
+        "defaultValue": "XXXXX@XXXXX.com",
+        "type": "String"
+    }
+    },
+    "triggers": {
+    "manual": {
+        "inputs": {
+        "schema": {
+            "properties": {},
+            "required": [],
+            "type": "object"
+        }
+        },
+        "type": "Manual"
+    }
+    }
+}
+</code></pre>
+
+<p>If you are not familiar with what the different sections in the code represents, you can view the <a href="https://azure.microsoft.com/en-us/documentation/articles/app-service-logic-what-are-logic-apps/"> Logic App Workflow Definition Language</a> documentation.</p>
+
+<p>For this workflow you are using an <a href="https://sendgrid.com/blog/whats-webhook/"> HTTP Webhook Trigger </a>. If you look at the code above, you will see parameters like the following example.
+   =@{triggerBody()['Subject']}</p>
+
+<p>The triggerBody() represents the parameters that are included in the body of an REST POST to the Logic App REST API. The ()['Subject'] represents the field. All these parameters make up the JSON formatted body. </p>
+
+<blockquote>
+<p>TIP: By using a Web hook, you can have full access to the header and body of the trigger’s request. In this application you want the body.</p>
+</blockquote>
+
+<p>As mentioned previously, you can use the designer to assign parameters or do it in code view.
+If you do it in code view, then you define which properties require a value as shown in the following code sample. 
+    "triggers": {
+        "manual": {
+            "inputs": {
+            "schema": {
+                "properties": {
+            "Subject": {
+                "type" : "String"   </p>
+
+<pre><code>        }
+        },
+            "required": [
+        "Subject"
+             ],
+            "type": "object"
+        }
+        },
+        "type": "Manual"
+    }
+    }
+</code></pre>
+
+<p>What you are doing is creating a JSON schema. that will be passed in from the body of the Http POST.
+To fire your trigger, you will need a CallbackURL.  You will learn how to generate it further down in the tutorial.  </p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/HEDIDIN/DocDbNotifications">Docdbnotifications</a> is maintained by <a href="https://github.com/HEDIDIN">HEDIDIN</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
