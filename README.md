@@ -1,9 +1,7 @@
-# DocDbNotifications
-
-## DocumentDB Notifications
+# DocumentDB Notifications
 Version 1.0.0
 
-# Notifications for new or modified DocumentDB Resources
+## Notifications for new or modified DocumentDB Resources
 
 This article came about from a question I once saw posted.  The question was “Does DocumentDB support notifications for modified resources?” 
 
