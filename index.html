@@ -1,37 +1,25 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en-us">
   <head>
-    <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="description" content="Notifications for new or modified DocumentDB Resources : Notifications ">
-
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
-
-    <title>Notifications for new or modified DocumentDB Resources</title>
+    <meta charset="UTF-8">
+    <title>Notifications for new or modified DocumentDB Resources by HEDIDIN</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
   </head>
-
   <body>
+    <section class="page-header">
+      <h1 class="project-name">Notifications for new or modified DocumentDB Resources</h1>
+      <h2 class="project-tagline">Notifications </h2>
+      <a href="https://github.com/HEDIDIN/DocDbNotifications" class="btn">View on GitHub</a>
+      <a href="https://github.com/HEDIDIN/DocDbNotifications/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/HEDIDIN/DocDbNotifications/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
 
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/HEDIDIN/DocDbNotifications">View on GitHub</a>
-
-          <h1 id="project_title">Notifications for new or modified DocumentDB Resources</h1>
-          <h2 id="project_tagline">Notifications </h2>
-
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/HEDIDIN/DocDbNotifications/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/HEDIDIN/DocDbNotifications/tarball/master">Download this project as a tar.gz file</a>
-            </section>
-        </header>
-    </div>
-
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
-        <h1>
+    <section class="main-content">
+      <h1>
 <a id="docdbnotifications" class="anchor" href="#docdbnotifications" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>DocDbNotifications</h1>
 
 <p>DocumentDB Notifications Tutorial</p>
@@ -51,11 +39,11 @@
 <blockquote>
 <p>DocumentDB is the repository for HL7 FHIR documents.  Let’s assume that your DocumentDB Database combined with API and Logic App make up an HL7 FHIR Server.  A Healthcare facility is storing Patient data in the DocumentDB ‘Patients’ database. 
 There are several Collections within the Patient database; Clinical, Identification, etc.. Patient information falls under Identification.  You have a collection named “Patient”.</p>
-</blockquote>
 
 <p>The Cardiology department is tracking personal heath and exercise data.  Searching for new or modified Patient records is time consuming.  They asked the IT department if there was a way that they could receive a notification for new or modified Patient records.  </p>
 
 <p>The IT department said that they could easily provide this. They also said that they could push the documents to Google Drive so the Cardiology department could easily access them.</p>
+</blockquote>
 
 <h2>
 <a id="this-is-how-the-it-department-solved-the-problem" class="anchor" href="#this-is-how-the-it-department-solved-the-problem" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>This is how the IT department solved the problem.</h2>
@@ -65,7 +53,7 @@ There are several Collections within the Patient database; Clinical, Identificat
 <h2>
 <a id="high-level-view-of-notification-process" class="anchor" href="#high-level-view-of-notification-process" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>High-Level View of Notification Process</h2>
 
-<p><img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/High%20Level%20View.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/High%20Level%20View.png" alt=""></p>
 
 <ol>
 <li>You start off with a Logic App the has a Timer Trigger. The default value is to run every hour.</li>
@@ -82,7 +70,7 @@ There are several Collections within the Patient database; Clinical, Identificat
 <p>These steps are as follows.
 1. You need to get the current UTC DateTime from an API App.  The default value is one hour previous.
 1. Then it’s converted to a Unix Timestamp format. This is the default format for timestamps in DocumentDB.
-1. You POST the value to an API App, which does a DocumentDB query. The value is used in a query. “SELECT * FROM Patients p WHERE (p._ts &gt;= <a href="https://github.com/value" class="user-mention">@value</a>)”</p>
+1. You POST the value to an API App, which does a DocumentDB query. The value is used in a query. ``“SELECT * FROM Patients p WHERE (p._ts &gt;= <a href="https://github.com/value" class="user-mention">@value</a>)”</p>
 
 <blockquote>
 <p>NOTE: The _ts represents the TimeStamp metadata for all DocumentDB resources.
@@ -303,7 +291,7 @@ To fire your trigger, you will need a CallbackURL.  You will learn how to genera
 <p>Designer View
 <img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/getutcdate.png" alt=""></p>
 
-<p>Code View</p>
+<p><strong>Code View</strong></p>
 
 <pre><code>"GetUtcDate": {
         "conditions": [],
@@ -325,9 +313,10 @@ To fire your trigger, you will need a CallbackURL.  You will learn how to genera
 
 <p>This action calls your API App to return the Utc Date string value.</p>
 
-<p>Operations</p>
+<h4>
+<a id="operations" class="anchor" href="#operations" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Operations</h4>
 
-<p>Request</p>
+<p><strong>Request</strong></p>
 
 <pre><code>{
     "uri": "https://docdbnotificationapi-debug.azurewebsites.net/api/Authorization",
@@ -338,7 +327,7 @@ To fire your trigger, you will need a CallbackURL.  You will learn how to genera
 }
 </code></pre>
 
-<p>Response</p>
+<p><strong>Response</strong></p>
 
 <pre><code>{
     "statusCode": 200,
@@ -388,9 +377,10 @@ To fire your trigger, you will need a CallbackURL.  You will learn how to genera
 
 <p>This action calls your API App to handle the conversion.</p>
 
-<p>Operations</p>
+<h4>
+<a id="operations-1" class="anchor" href="#operations-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Operations</h4>
 
-<p>Request</p>
+<p><strong>Request</strong></p>
 
 <pre><code>{
     "uri": "https://docdbnotificationapi-debug.azurewebsites.net/api/Conversion",
@@ -401,7 +391,7 @@ To fire your trigger, you will need a CallbackURL.  You will learn how to genera
 }   
 </code></pre>
 
-<p>Response</p>
+<p><strong>Response</strong></p>
 
 <pre><code>{
     "statusCode": 200,
@@ -453,9 +443,10 @@ To fire your trigger, you will need a CallbackURL.  You will learn how to genera
 
 <p>The method called is <strong>QueryForNewPatientDocuments</strong></p>
 
-<p>Operations</p>
+<h4>
+<a id="operations-2" class="anchor" href="#operations-2" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Operations</h4>
 
-<p>Request</p>
+<p><strong>Request</strong></p>
 
 <pre><code>{
     "uri": "https://docdbnotificationapi-debug.azurewebsites.net/api/Patient",
@@ -466,7 +457,7 @@ To fire your trigger, you will need a CallbackURL.  You will learn how to genera
 }
 </code></pre>
 
-<p>Response</p>
+<p><strong>Response</strong></p>
 
 <pre><code>{
     "statusCode": 200,
@@ -566,9 +557,10 @@ To fire your trigger, you will need a CallbackURL.  You will learn how to genera
 
 <p>If you are not familiar with using the Google Drive Api,  you can view the documentation <a href="https://azure.microsoft.com/en-us/documentation/articles/create-api-googledrive/">here</a>.</p>
 
-<p>Operations</p>
+<h4>
+<a id="operations-3" class="anchor" href="#operations-3" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Operations</h4>
 
-<p>Request</p>
+<p><strong>Request</strong></p>
 
 <pre><code>"host": {
     "api": {
@@ -590,7 +582,7 @@ To fire your trigger, you will need a CallbackURL.  You will learn how to genera
     "$content": "W3siaWQiOiJ4Y2RhIiwiX3JpZCI6InZDWUxBUDJrNmdBWEFBQUFBQUFBQUE9PSIsIl9zZWxmIjoiZGJzL3ZDWUxBQT09L2NvbGxzL3ZDWUxBUDJrNmdBPS9kb2NzL3ZDWUxBUDJrNmdBWEFBQUFBQUFBQUE9PS8iLCJfdHMiOjE0NTQ4NzQ2MjAsIl9ldGFnIjoiXCIwMDAwN2QwMS0wMDAwLTAwMDAtMDAwMC01NmI3OWZmYzAwMDBcIiIsInJlc291cmNlVHlwZSI6IlBhdGllbnQiLCJ0ZXh0Ijp7InN0YXR1cyI6ImdlbmVyYXRlZCIsImRpdiI6IjxkaXY+XG4gICAgICBcbiAgICAgIDxwPkhlbnJ5IExldmluIHRoZSA3dGg8L3A+XG4gICAgXG4gICAgPC9kaXY+In0sImlkZW50aWZpZXIiOlt7InVzZSI6InVzdWFsIiwidHlwZSI6eyJjb2RpbmciOlt7InN5c3RlbSI6Imh0dHA6Ly9obDcub3JnL2ZoaXIvdjIvMDIwMyIsImNvZGUiOiJNUiJ9XX0sInN5c3RlbSI6InVybjpvaWQ6Mi4xNi44NDAuMS4xMTM4ODMuMTkuNSIsInZhbHVlIjoiMTIzNDUifV0sImFjdGl2ZSI6dHJ1ZSwibmFtZSI6W3siZmFtaWx5IjpbIkxldmluIl0sImdpdmVuIjpbIkhlbnJ5Il19XSwiZ2VuZGVyIjoibWFsZSIsImJpcnRoRGF0ZSI6IjE5MzItMDktMjQiLCJtYW5hZ2luZ09yZ2FuaXphdGlvbiI6eyJyZWZlcmVuY2UiOiJPcmdhbml6YXRpb24vMi4xNi44NDAuMS4xMTM4ODMuMTkuNSIsImRpc3BsYXkiOiJHb29kIEhlYWx0aCBDbGluaWMifX0seyJpZCI6InVzMDEiLCJfcmlkIjoidkNZTEFQMms2Z0FaQUFBQUFBQUFBQT09IiwiX3NlbGYiOiJkYnMvdkNZTEFBPT0vY29sbHMvdkNZTEFQMms2Z0E9L2RvY3MvdkNZTEFQMms2Z0FaQUFBQUFBQUFBQT09LyIsIl90cyI6MTQ1NDg3NDYyMCwiX2V0YWciOiJcIjAwMDA3ZjAxLTAwMDAtMDAwMC0wMDAwLTU2Yjc5ZmZjMDAwMFwiIiwicmVzb3VyY2VUeXBlIjoiUGF0aWVudC......
 </code></pre>
 
-<p>Response</p>
+<p><strong>Response</strong></p>
 
 <pre><code>{
     "statusCode": 200,
@@ -683,8 +675,10 @@ To fire your trigger, you will need a CallbackURL.  You will learn how to genera
 
 <p>This action depends on the *<em>GetDocuments *</em>action.</p>
 
-<p>Operations
-Request</p>
+<h4>
+<a id="operations-4" class="anchor" href="#operations-4" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Operations</h4>
+
+<p><strong>Request</strong></p>
 
 <pre><code>{
     "uri": "https://api.sendgrid.com/api/mail.send.json",
@@ -696,7 +690,7 @@ Request</p>
 }
 </code></pre>
 
-<p>Response
+<p><strong>Response</strong>
     {
         "statusCode": 200,
         "headers": {
@@ -727,7 +721,7 @@ Request</p>
 <a id="metrics" class="anchor" href="#metrics" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Metrics</h2>
 
 <p>You can configure Monitoring for the main Logic App in the portal. This would allow you to view the Run Latency and other events as show in the following figure.
-[image]</p>
+<img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/metrics.png" alt=""></p>
 
 <h2>
 <a id="docdb-trigger" class="anchor" href="#docdb-trigger" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>DocDb Trigger</h2>
@@ -780,9 +774,10 @@ Request</p>
 The Action is an Http Post that uses the Callback URL for the main Logic App. 
 The body contains the parameters that are specified in the JSON Schema. </p>
 
-<p>Operations</p>
+<h4>
+<a id="operations-5" class="anchor" href="#operations-5" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Operations</h4>
 
-<p>Request</p>
+<p><strong>Request</strong></p>
 
 <pre><code>{
     "uri": "https://prod-01.westus.logic.azure.com:443/workflows/12a1de57e46645bc9ce7a247df782887/triggers/manual/run?api-version=2015-08-01-preview&amp;sp=%2Ftriggers%2Fmanual%2Frun&amp;sv=1.0&amp;sig=ObTlihr529ATIuvuG-dhxOgBL4JZjItrvPQ8PV6973c",
@@ -797,7 +792,7 @@ The body contains the parameters that are specified in the JSON Schema. </p>
 }
 </code></pre>
 
-<p>Response</p>
+<p><strong>Response</strong></p>
 
 <pre><code>{
     "statusCode": 202,
@@ -948,7 +943,7 @@ public string GetUtcDate(
 
 <p>This operation uses the DocumentDB NET SDK to create a document query; </p>
 
-<pre><code> CreateDocumentQuery&lt;Document&gt;(collectionLink, filterQuery, options).AsEnumerable();
+<pre><code> ``CreateDocumentQuery&lt;Document&gt;(collectionLink, filterQuery, options).AsEnumerable();
 </code></pre>
 
 <p>The response from the ConvertToTimeStamp operation (unixTimeStamp) is passed in.   The operation returns a List of documents. IList</p>
@@ -973,7 +968,7 @@ public string GetUtcDate(
 
 <p>Your result should look like this:</p>
 
-<pre><code>https://prod-02.westus.logic.azure.com:443/workflows/508ecbba4eec4f7689422c8d7a40fbac/triggers/manual/run?api-version=2015-08-01-prevaiew&amp;sp=%2Ftriggers%2Fmanual%2Frun&amp;sv=1.0&amp;sig=XXXXXXXXXXXXXXXXXXX
+<pre><code>``https://prod-02.westus.logic.azure.com:443/workflows/508ecbba4eec4f7689422c8d7a40fbac/triggers/manual/run?api-version=2015-08-01-prevaiew&amp;sp=%2Ftriggers%2Fmanual%2Frun&amp;sv=1.0&amp;sig=XXXXXXXXXXXXXXXXXXX
 </code></pre>
 
 <p>You can use a tool like <a href="http://www.getpostman.com/">postman</a> to test you main Logic App as shown in the following figure.
@@ -994,18 +989,15 @@ The following figure is an example:
 <li>How easy it is too create custom workflows with Logic Apps Designer</li>
 <li>The key is to plan ahead and model your workflow.</li>
 </ul>
-      </section>
-    </div>
 
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">Notifications for new or modified DocumentDB Resources maintained by <a href="https://github.com/HEDIDIN">HEDIDIN</a></p>
-        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/HEDIDIN/DocDbNotifications">Notifications for new or modified DocumentDB Resources</a> is maintained by <a href="https://github.com/HEDIDIN">HEDIDIN</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
       </footer>
-    </div>
 
-    
+    </section>
 
+  
   </body>
 </html>
