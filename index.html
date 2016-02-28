@@ -22,14 +22,14 @@
       <h1>
 <a id="docdbnotifications" class="anchor" href="#docdbnotifications" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>DocDbNotifications</h1>
 
-<p>DocumentDB Notifications Tutorial</p>
+<p>DocumentDB Notifications</p>
 
 <h1>
 <a id="notifications-for-new-or-modified-documentdb-resources" class="anchor" href="#notifications-for-new-or-modified-documentdb-resources" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Notifications for new or modified DocumentDB Resources</h1>
 
-<p>This article came about from a question I saw posted.  The question was “Does DocumentDB support notifications for modified resources?” </p>
+<p>This article came about from a question I saw posted. The question was <strong>Does DocumentDB support notifications for modified resources</strong>?</p>
 
-<p>I have worked with BizTalk Server for many years, and this is a very common scenario when using the <a href="https://msdn.microsoft.com/en-us/library/bb798128.aspx">WCF LOB Adapter</a> .  So I decided to see if I could duplicate this functionality in DocumentDB for new and/ or modified documents. </p>
+<p>I have worked with BizTalk Server for many years, and this is a very common scenario when using the <a href="https://msdn.microsoft.com/en-us/library/bb798128.aspx">WCF LOB Adapter</a> . So I decided to see if I could duplicate this functionality in DocumentDB for new and/ or modified documents.</p>
 
 <h2>
 <a id="you-start-off-with-a-use-cases" class="anchor" href="#you-start-off-with-a-use-cases" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>You start off with a Use Cases.</h2>
@@ -37,8 +37,8 @@
 <p>The following story is the Use Case for this article.</p>
 
 <blockquote>
-<p>DocumentDB is the repository for HL7 FHIR documents.  Let’s assume that your DocumentDB Database combined with API and Logic App make up an HL7 FHIR Server.  A Healthcare facility is storing Patient data in the DocumentDB ‘Patients’ database. 
-There are several Collections within the Patient database; Clinical, Identification, etc.. Patient information falls under Identification.  You have a collection named “Patient”.</p>
+<p>DocumentDB is the repository for HL7 FHIR documents.  Let's assume that your DocumentDB Database combined with API and Logic App make up an HL7 FHIR Server.  A Healthcare facility is storing Patient data in the DocumentDB "Patients" database. 
+There are several Collections within the Patient database; Clinical, Identification, etc.. Patient information falls under Identification.  You have a collection named "Patient".</p>
 
 <p>The Cardiology department is tracking personal heath and exercise data.  Searching for new or modified Patient records is time consuming.  They asked the IT department if there was a way that they could receive a notification for new or modified Patient records.  </p>
 
@@ -48,12 +48,12 @@ There are several Collections within the Patient database; Clinical, Identificat
 <h2>
 <a id="this-is-how-the-it-department-solved-the-problem" class="anchor" href="#this-is-how-the-it-department-solved-the-problem" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>This is how the IT department solved the problem.</h2>
 
-<p>In order to create this application, I decided to model it first.  I like using Business Process Model and Notation (BPMN) because both technical and non-technical can easily understand it. I consider this a business process. </p>
+<p>In order to create this application, It was decided to model it first.  The nice think about using Business Process Model and Notation (BPMN) is that both technical and non-technical can easily understand it. This is considered this a business process. </p>
 
 <h2>
 <a id="high-level-view-of-notification-process" class="anchor" href="#high-level-view-of-notification-process" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>High-Level View of Notification Process</h2>
 
-<p><img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/High%20Level%20View.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/High%20Level%20View.png" alt="High Level View"></p>
 
 <ol>
 <li>You start off with a Logic App the has a Timer Trigger. The default value is to run every hour.</li>
@@ -61,7 +61,7 @@ There are several Collections within the Patient database; Clinical, Identificat
 </ol>
 
 <h3>
-<a id="lets-take-a-look-at-what-this-logic-app-does" class="anchor" href="#lets-take-a-look-at-what-this-logic-app-does" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Let’s take a look at what this Logic App does</h3>
+<a id="lets-take-a-look-at-what-this-logic-app-does" class="anchor" href="#lets-take-a-look-at-what-this-logic-app-does" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Let's take a look at what this Logic App does</h3>
 
 <p>If you look at the following figure there are several steps in the workflow.</p>
 
@@ -71,9 +71,11 @@ There are several Collections within the Patient database; Clinical, Identificat
 1. You need to get the current UTC DateTime from an API App.  The default value is one hour previous.</p>
 
 <ol>
-<li><p>Then it’s converted to a Unix Timestamp format. This is the default format for timestamps in DocumentDB.</p></li>
-<li><p>You POST the value to an API App, which does a DocumentDB query. The value is used in a query. ``“SELECT * FROM Patients p WHERE (p._ts &gt;= <a href="https://github.com/value" class="user-mention">@value</a>)”</p></li>
+<li><p>Then it's converted to a Unix Timestamp format. This is the default format for timestamps in DocumentDB.</p></li>
+<li><p>You POST the value to an API App, which does a DocumentDB query. The value is used in a query.</p></li>
 </ol>
+
+<div class="highlight highlight-source-sql"><pre>        <span class="pl-k">SELECT</span> <span class="pl-k">*</span> <span class="pl-k">FROM</span> Patients p <span class="pl-k">WHERE</span> (<span class="pl-c1">p</span>.<span class="pl-c1">_ts</span> <span class="pl-k">&gt;=</span> @unixTimeStamp)</pre></div>
 
 <blockquote>
 <p>NOTE: The _ts represents the TimeStamp metadata for all DocumentDB resources.</p>
@@ -81,33 +83,33 @@ There are several Collections within the Patient database; Clinical, Identificat
 
 <ol>
 <li><p>If there are documents found, the response body is sent to you Google Drive</p></li>
-<li><p>Finally, an email is sent that notifies the recipient of the number of documents found. If no documents were found, the email body would be “0 Documents Found”. </p></li>
+<li><p>Finally, an email is sent that notifies the recipient of the number of documents found. If no documents were found, the email body would be "0 Documents Found". </p></li>
 </ol>
 
-<p>Now that you have an idea of what the workflow does, let’s take a look at how you implement it.</p>
+<p>Now that you have an idea of what the workflow does, let's take a look at how you implement it.</p>
 
 <h3>
-<a id="lets-start-with-the-main-logic-app" class="anchor" href="#lets-start-with-the-main-logic-app" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Let’s start with the main Logic App.</h3>
+<a id="lets-start-with-the-main-logic-app" class="anchor" href="#lets-start-with-the-main-logic-app" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Let's start with the main Logic App.</h3>
 
-<p>When you create a new Logic App, your are presented with “How would you like to start?” 
-When you click inside the text box,  you have a choice of events. For this Logic App, you select “Manual – When a HTTP request is received” as shown below.</p>
+<p>When you create a new Logic App, your are presented with "How would you like to start?"<br>
+When you click inside the text box,  you have a choice of events. For this Logic App, you select "Manual When a HTTP request is received" as shown below.</p>
 
-<p><img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/starting.off.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/starting.off.png" alt="Starting Off"></p>
 
 <h3>
 <a id="design-view-of-your-completed-logic-app" class="anchor" href="#design-view-of-your-completed-logic-app" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Design View of your completed Logic App</h3>
 
 <p>The following figure show the design view for the Logic App, which is named DocDB.</p>
 
-<p><img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/LogicApp.Workflow.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/LogicApp.Workflow.png" alt="Logic App Workflow"></p>
 
-<p>When editing the actions in the Logic App Designer, you have the option of selecting *<em>Outputs *</em>from the Http Request or from the previous action as shown in the sendMail action below.</p>
+<p>When editing the actions in the Logic App Designer, you have the option of selecting <strong>Outputs</strong> from the Http Request or from the previous action as shown in the sendMail action below.</p>
 
-<p><img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/choose.outputs.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/choose.outputs.png" alt="Choose outputs"></p>
 
-<p>Before each action in your workflow,  you can make a decision; ** Add an action *<em>or *</em>Add a condition **as shown in the following figure.</p>
+<p>Before each action in your workflow,  you can make a decision; <strong>Add an action</strong>  or <strong>Add a condition</strong> as shown in the following figure.</p>
 
-<p><img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/add.action.or.condition.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/add.action.or.condition.png" alt="Make a decision"></p>
 
 <p>If you select <strong>Add a condition</strong>, you are presented with a form, as shown in the following figure, to enter your logic.  This is in essence, a business rule.  If you click inside a field, you have a choice of selecting parameters from the previous action.  You can also enter the values directly.</p>
 
@@ -115,181 +117,185 @@ When you click inside the text box,  you have a choice of events. For this Logic
 <p>TIP: You also have the capability to enter everything in Code View.</p>
 </blockquote>
 
-<p>Let’s take a look at the completed Logic App in code view.  </p>
+<p>Let's take a look at the completed Logic App in code view.  </p>
 
-<pre><code>{
-    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2015-08-01-preview/workflowdefinition.json#",
-    "actions": {
-    "Conversion": {
-        "conditions": [
-        {
-            "dependsOn": "GetUtcDate"
-        }
-        ],
-        "inputs": {
-        "method": "post",
-        "queries": {
-            "currentDateTime": "@{body('GetUtcDate')}"
-        },
-        "uri": "https://docdbnotificationapi-debug.azurewebsites.net/api/Conversion"
-        },
-        "metadata": {
-        "apiDefinitionUrl": "https://docdbnotificationapi-debug.azurewebsites.net/swagger/docs/v1"
-        },
-        "type": "Http"
-    },
-    "Create_file": {
-        "conditions": [
-        {
-            "dependsOn": "GetDocuments"
-        }
-        ],
-        "inputs": {
-        "body": "@decodeDataUri(concat('data:application/octet-stream,',encodeURIComponent(string(body('GetDocuments')))))",
-        "host": {
-            "api": {
-            "runtimeUrl": "https://logic-apis-westus.azure-apim.net/apim/googledrive"
-            },
-            "connection": {
-            "name": "@parameters('$connections')['googledrive']['connectionId']"
+<div class="highlight highlight-source-json"><pre>
+    {
+        <span class="pl-s"><span class="pl-pds">"</span>$schema<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2015-08-01-preview/workflowdefinition.json#<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>actions<span class="pl-pds">"</span></span>: {
+        <span class="pl-s"><span class="pl-pds">"</span>Conversion<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>conditions<span class="pl-pds">"</span></span>: [
+            {
+                <span class="pl-s"><span class="pl-pds">"</span>dependsOn<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>GetUtcDate<span class="pl-pds">"</span></span>
             }
+            ],
+            <span class="pl-s"><span class="pl-pds">"</span>inputs<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>method<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>post<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>queries<span class="pl-pds">"</span></span>: {
+                <span class="pl-s"><span class="pl-pds">"</span>currentDateTime<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>@{body('GetUtcDate')}<span class="pl-pds">"</span></span>
+            },
+            <span class="pl-s"><span class="pl-pds">"</span>uri<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>https://docdbnotificationapi-debug.azurewebsites.net/api/Conversion<span class="pl-pds">"</span></span>
+            },
+            <span class="pl-s"><span class="pl-pds">"</span>metadata<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>apiDefinitionUrl<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>https://docdbnotificationapi-debug.azurewebsites.net/swagger/docs/v1<span class="pl-pds">"</span></span>
+            },
+            <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Http<span class="pl-pds">"</span></span>
         },
-        "method": "post",
-        "path": "/datasets/default/files",
-        "queries": {
-            "folderPath": "/Patient",
-            "name": "Patient_@{guid()}.json"
+        <span class="pl-s"><span class="pl-pds">"</span>Create_file<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>conditions<span class="pl-pds">"</span></span>: [
+            {
+                <span class="pl-s"><span class="pl-pds">"</span>dependsOn<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>GetDocuments<span class="pl-pds">"</span></span>
+            }
+            ],
+            <span class="pl-s"><span class="pl-pds">"</span>inputs<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>body<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>@decodeDataUri(concat('data:application/octet-stream,',encodeURIComponent(string(body('GetDocuments')))))<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>host<span class="pl-pds">"</span></span>: {
+                <span class="pl-s"><span class="pl-pds">"</span>api<span class="pl-pds">"</span></span>: {
+                <span class="pl-s"><span class="pl-pds">"</span>runtimeUrl<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>https://logic-apis-westus.azure-apim.net/apim/googledrive<span class="pl-pds">"</span></span>
+                },
+                <span class="pl-s"><span class="pl-pds">"</span>connection<span class="pl-pds">"</span></span>: {
+                <span class="pl-s"><span class="pl-pds">"</span>name<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>@parameters('$connections')['googledrive']['connectionId']<span class="pl-pds">"</span></span>
+                }
+            },
+            <span class="pl-s"><span class="pl-pds">"</span>method<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>post<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>path<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>/datasets/default/files<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>queries<span class="pl-pds">"</span></span>: {
+                <span class="pl-s"><span class="pl-pds">"</span>folderPath<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>/Patient<span class="pl-pds">"</span></span>,
+                <span class="pl-s"><span class="pl-pds">"</span>name<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Patient_@{guid()}.json<span class="pl-pds">"</span></span>
+            }
+            },
+            <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>ApiConnection<span class="pl-pds">"</span></span>
+        },
+        <span class="pl-s"><span class="pl-pds">"</span>GetDocuments<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>conditions<span class="pl-pds">"</span></span>: [
+            {
+                <span class="pl-s"><span class="pl-pds">"</span>dependsOn<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Conversion<span class="pl-pds">"</span></span>
+            }
+            ],
+            <span class="pl-s"><span class="pl-pds">"</span>inputs<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>method<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>post<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>queries<span class="pl-pds">"</span></span>: {
+                <span class="pl-s"><span class="pl-pds">"</span>unixTimeStamp<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>@{body('Conversion')}<span class="pl-pds">"</span></span>
+            },
+            <span class="pl-s"><span class="pl-pds">"</span>uri<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>https://docdbnotificationapi-debug.azurewebsites.net/api/Patient<span class="pl-pds">"</span></span>
+            },
+            <span class="pl-s"><span class="pl-pds">"</span>metadata<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>apiDefinitionUrl<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>https://docdbnotificationapi-debug.azurewebsites.net/swagger/docs/v1<span class="pl-pds">"</span></span>
+            },
+            <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Http<span class="pl-pds">"</span></span>
+        },
+        <span class="pl-s"><span class="pl-pds">"</span>GetUtcDate<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>conditions<span class="pl-pds">"</span></span>: [],
+            <span class="pl-s"><span class="pl-pds">"</span>inputs<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>method<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>get<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>queries<span class="pl-pds">"</span></span>: {
+                <span class="pl-s"><span class="pl-pds">"</span>hoursBack<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>@{int(triggerBody()['GetUtcDate_HoursBack'])}<span class="pl-pds">"</span></span>
+            },
+            <span class="pl-s"><span class="pl-pds">"</span>uri<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>https://docdbnotificationapi-debug.azurewebsites.net/api/Authorization<span class="pl-pds">"</span></span>
+            },
+            <span class="pl-s"><span class="pl-pds">"</span>metadata<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>apiDefinitionUrl<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>https://docdbnotificationapi-debug.azurewebsites.net/swagger/docs/v1<span class="pl-pds">"</span></span>
+            },
+            <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Http<span class="pl-pds">"</span></span>
+        },
+        <span class="pl-s"><span class="pl-pds">"</span>sendMail<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>conditions<span class="pl-pds">"</span></span>: [
+            {
+                <span class="pl-s"><span class="pl-pds">"</span>dependsOn<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>GetDocuments<span class="pl-pds">"</span></span>
+            }
+            ],
+            <span class="pl-s"><span class="pl-pds">"</span>inputs<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>body<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>api_user=@{triggerBody()['sendgridUsername']}&amp;api_key=@{triggerBody()['sendgridPassword']}&amp;from=@{parameters('fromAddress')}&amp;to=@{triggerBody()['EmailTo']}&amp;subject=@{triggerBody()['Subject']}&amp;text=@{int(length(body('GetDocuments')))} Documents Found<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>headers<span class="pl-pds">"</span></span>: {
+                <span class="pl-s"><span class="pl-pds">"</span>Content-type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>application/x-www-form-urlencoded<span class="pl-pds">"</span></span>
+            },
+            <span class="pl-s"><span class="pl-pds">"</span>method<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>POST<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>uri<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>https://api.sendgrid.com/api/mail.send.json<span class="pl-pds">"</span></span>
+            },
+            <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Http<span class="pl-pds">"</span></span>
         }
         },
-        "type": "ApiConnection"
-    },
-    "GetDocuments": {
-        "conditions": [
-        {
-            "dependsOn": "Conversion"
-        }
-        ],
-        "inputs": {
-        "method": "post",
-        "queries": {
-            "unixTimeStamp": "@{body('Conversion')}"
-        },
-        "uri": "https://docdbnotificationapi-debug.azurewebsites.net/api/Patient"
-        },
-        "metadata": {
-        "apiDefinitionUrl": "https://docdbnotificationapi-debug.azurewebsites.net/swagger/docs/v1"
-        },
-        "type": "Http"
-    },
-    "GetUtcDate": {
-        "conditions": [],
-        "inputs": {
-        "method": "get",
-        "queries": {
-            "hoursBack": "@{int(triggerBody()['GetUtcDate_HoursBack'])}"
-        },
-        "uri": "https://docdbnotificationapi-debug.azurewebsites.net/api/Authorization"
-        },
-        "metadata": {
-        "apiDefinitionUrl": "https://docdbnotificationapi-debug.azurewebsites.net/swagger/docs/v1"
-        },
-        "type": "Http"
-    },
-    "sendMail": {
-        "conditions": [
-        {
-            "dependsOn": "GetDocuments"
-        }
-        ],
-        "inputs": {
-        "body": "api_user=@{triggerBody()['sendgridUsername']}&amp;api_key=@{triggerBody()['sendgridPassword']}&amp;from=@{parameters('fromAddress')}&amp;to=@{triggerBody()['EmailTo']}&amp;subject=@{triggerBody()['Subject']}&amp;text=@{int(length(body('GetDocuments')))} Documents Found",
-        "headers": {
-            "Content-type": "application/x-www-form-urlencoded"
-        },
-        "method": "POST",
-        "uri": "https://api.sendgrid.com/api/mail.send.json"
-        },
-        "type": "Http"
-    }
-    },
-    "contentVersion": "1.0.0.0",
-    "outputs": {
-    "Results": {
-        "type": "String",
-        "value": "@{int(length(body('GetDocuments')))} Records Found"
-    }
-    },
-    "parameters": {
-    "$connections": {
-        "defaultValue": {},
-        "type": "Object"
-    },
-    "fromAddress": {
-        "defaultValue": "XXX@XXX.com",
-        "type": "String"
-    },
-    "toAddress": {
-        "defaultValue": "XXXXX@XXXXX.com",
-        "type": "String"
-    }
-    },
-    "triggers": {
-    "manual": {
-        "inputs": {
-        "schema": {
-            "properties": {},
-            "required": [],
-            "type": "object"
+        <span class="pl-s"><span class="pl-pds">"</span>contentVersion<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>1.0.0.0<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>outputs<span class="pl-pds">"</span></span>: {
+        <span class="pl-s"><span class="pl-pds">"</span>Results<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>String<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>value<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>@{int(length(body('GetDocuments')))} Records Found<span class="pl-pds">"</span></span>
         }
         },
-        "type": "Manual"
+        <span class="pl-s"><span class="pl-pds">"</span>parameters<span class="pl-pds">"</span></span>: {
+        <span class="pl-s"><span class="pl-pds">"</span>$connections<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>defaultValue<span class="pl-pds">"</span></span>: {},
+            <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Object<span class="pl-pds">"</span></span>
+        },
+        <span class="pl-s"><span class="pl-pds">"</span>fromAddress<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>defaultValue<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>XXX@XXX.com<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>String<span class="pl-pds">"</span></span>
+        },
+        <span class="pl-s"><span class="pl-pds">"</span>toAddress<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>defaultValue<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>XXXXX@XXXXX.com<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>String<span class="pl-pds">"</span></span>
+        }
+        },
+        <span class="pl-s"><span class="pl-pds">"</span>triggers<span class="pl-pds">"</span></span>: {
+        <span class="pl-s"><span class="pl-pds">"</span>manual<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>inputs<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>schema<span class="pl-pds">"</span></span>: {
+                <span class="pl-s"><span class="pl-pds">"</span>properties<span class="pl-pds">"</span></span>: {},
+                <span class="pl-s"><span class="pl-pds">"</span>required<span class="pl-pds">"</span></span>: [],
+                <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>object<span class="pl-pds">"</span></span>
+            }
+            },
+            <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Manual<span class="pl-pds">"</span></span>
+        }
+        }
     }
-    }
-}
-</code></pre>
+</pre></div>
 
 <p>If you are not familiar with what the different sections in the code represents, you can view the <a href="https://azure.microsoft.com/en-us/documentation/articles/app-service-logic-what-are-logic-apps/"> Logic App Workflow Definition Language</a> documentation.</p>
 
-<p>For this workflow you are using an <a href="https://sendgrid.com/blog/whats-webhook/"> HTTP Webhook Trigger </a>. If you look at the code above, you will see parameters like the following example.
-   =@{triggerBody()['Subject']}</p>
+<p>For this workflow you are using an <a href="https://sendgrid.com/blog/whats-webhook/"> HTTP Webhook Trigger </a>. If you look at the code above, you will see parameters like the following example.</p>
+
+<div class="highlight highlight-source-cs"><pre>
+   =@{triggerBody()[<span class="pl-s"><span class="pl-pds">'</span>Subject<span class="pl-pds">'</span></span>]}
+</pre></div>
 
 <p>The triggerBody() represents the parameters that are included in the body of an REST POST to the Logic App REST API. The ()['Subject'] represents the field. All these parameters make up the JSON formatted body. </p>
 
 <blockquote>
-<p>TIP: By using a Web hook, you can have full access to the header and body of the trigger’s request. In this application you want the body.</p>
+<p>TIP: By using a Web hook, you can have full access to the header and body of the trigger�s request. In this application you want the body.</p>
 </blockquote>
 
 <p>As mentioned previously, you can use the designer to assign parameters or do it in code view.
 If you do it in code view, then you define which properties require a value as shown in the following code sample. </p>
 
-<pre><code>"triggers": {
-    "manual": {
-        "inputs": {
-        "schema": {
-            "properties": {
-        "Subject": {
-            "type" : "String"   
+<div class="highlight highlight-source-json"><pre>
+    <span class="pl-s"><span class="pl-pds">"</span>triggers<span class="pl-pds">"</span></span>: {
+        <span class="pl-s"><span class="pl-pds">"</span>manual<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>inputs<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>schema<span class="pl-pds">"</span></span>: {
+                <span class="pl-s"><span class="pl-pds">"</span>properties<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>Subject<span class="pl-pds">"</span></span>: {
+                <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span> : <span class="pl-s"><span class="pl-pds">"</span>String<span class="pl-pds">"</span></span>   
 
+            }
+            },
+                <span class="pl-s"><span class="pl-pds">"</span>required<span class="pl-pds">"</span></span>: [
+            <span class="pl-s"><span class="pl-pds">"</span>Subject<span class="pl-pds">"</span></span>
+                 ],
+                <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>object<span class="pl-pds">"</span></span>
+            }
+            },
+            <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Manual<span class="pl-pds">"</span></span>
         }
-        },
-            "required": [
-        "Subject"
-             ],
-            "type": "object"
-        }
-        },
-        "type": "Manual"
-    }
-    }
-</code></pre>
+        }</pre></div>
 
 <p>What you are doing is creating a JSON schema. that will be passed in from the body of the Http POST.
-To fire your trigger, you will need a CallbackURL.  You will learn how to generate it further down in the tutorial.  </p>
+To fire your trigger, you will need a CallbackURL.  You will learn how to generate it later in the tutorial.  </p>
 
 <h2>
 <a id="actions" class="anchor" href="#actions" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Actions</h2>
 
-<p>Let’s see what each action does.</p>
+<p>Let's see what each action does.</p>
 
 <h3>
 <a id="getutcdate" class="anchor" href="#getutcdate" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>GetUTCDate</h3>
@@ -299,21 +305,21 @@ To fire your trigger, you will need a CallbackURL.  You will learn how to genera
 
 <p><strong>Code View</strong></p>
 
-<pre><code>"GetUtcDate": {
-        "conditions": [],
-        "inputs": {
-        "method": "get",
-        "queries": {
-            "hoursBack": "@{int(triggerBody()['GetUtcDate_HoursBack'])}"
+<div class="highlight highlight-source-json"><pre>    <span class="pl-s"><span class="pl-pds">"</span>GetUtcDate<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>conditions<span class="pl-pds">"</span></span>: [],
+            <span class="pl-s"><span class="pl-pds">"</span>inputs<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>method<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>get<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>queries<span class="pl-pds">"</span></span>: {
+                <span class="pl-s"><span class="pl-pds">"</span>hoursBack<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>@{int(triggerBody()['GetUtcDate_HoursBack'])}<span class="pl-pds">"</span></span>
+            },
+            <span class="pl-s"><span class="pl-pds">"</span>uri<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>https://docdbnotificationapi-debug.azurewebsites.net/api/Authorization<span class="pl-pds">"</span></span>
+            },
+            <span class="pl-s"><span class="pl-pds">"</span>metadata<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>apiDefinitionUrl<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>https://docdbnotificationapi-debug.azurewebsites.net/swagger/docs/v1<span class="pl-pds">"</span></span>
+            },
+            <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Http<span class="pl-pds">"</span></span>
         },
-        "uri": "https://docdbnotificationapi-debug.azurewebsites.net/api/Authorization"
-        },
-        "metadata": {
-        "apiDefinitionUrl": "https://docdbnotificationapi-debug.azurewebsites.net/swagger/docs/v1"
-        },
-        "type": "Http"
-    },
-</code></pre>
+</pre></div>
 
 <p>This HTTP action performs a GET operation.  It calls the API APP GetUtcDate method. The Uri uses the 'GetUtcDate_HoursBack'  property passed into the Trigger body.  The 'GetUtcDate_HoursBack' value is set in the first Logic App.  (You will learn more about the Trigger Logic App later in the tutorial.</p>
 
@@ -324,60 +330,65 @@ To fire your trigger, you will need a CallbackURL.  You will learn how to genera
 
 <p><strong>Request</strong></p>
 
-<pre><code>{
-    "uri": "https://docdbnotificationapi-debug.azurewebsites.net/api/Authorization",
-    "method": "get",
-    "queries": {
-    "hoursBack": "24"
+<div class="highlight highlight-source-json"><pre>    {
+        <span class="pl-s"><span class="pl-pds">"</span>uri<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>https://docdbnotificationapi-debug.azurewebsites.net/api/Authorization<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>method<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>get<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>queries<span class="pl-pds">"</span></span>: {
+          <span class="pl-s"><span class="pl-pds">"</span>hoursBack<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>24<span class="pl-pds">"</span></span>
+        }
     }
-}
-</code></pre>
+</pre></div>
 
 <p><strong>Response</strong></p>
 
-<pre><code>{
-    "statusCode": 200,
-    "headers": {
-    "pragma": "no-cache",
-    "cache-Control": "no-cache",
-    "date": "Fri, 26 Feb 2016 15:47:33 GMT",
-    "server": "Microsoft-IIS/8.0",
-    "x-AspNet-Version": "4.0.30319",
-    "x-Powered-By": "ASP.NET"
-    },
-    "body": "Fri, 15 Jan 2016 23:47:33 GMT"
-}
-</code></pre>
+<div class="highlight highlight-source-json"><pre>
+    {
+        <span class="pl-s"><span class="pl-pds">"</span>statusCode<span class="pl-pds">"</span></span>: <span class="pl-c1">200</span>,
+        <span class="pl-s"><span class="pl-pds">"</span>headers<span class="pl-pds">"</span></span>: {
+          <span class="pl-s"><span class="pl-pds">"</span>pragma<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>no-cache<span class="pl-pds">"</span></span>,
+          <span class="pl-s"><span class="pl-pds">"</span>cache-Control<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>no-cache<span class="pl-pds">"</span></span>,
+          <span class="pl-s"><span class="pl-pds">"</span>date<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Fri, 26 Feb 2016 15:47:33 GMT<span class="pl-pds">"</span></span>,
+          <span class="pl-s"><span class="pl-pds">"</span>server<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Microsoft-IIS/8.0<span class="pl-pds">"</span></span>,
+          <span class="pl-s"><span class="pl-pds">"</span>x-AspNet-Version<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>4.0.30319<span class="pl-pds">"</span></span>,
+          <span class="pl-s"><span class="pl-pds">"</span>x-Powered-By<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>ASP.NET<span class="pl-pds">"</span></span>
+        },
+        <span class="pl-s"><span class="pl-pds">"</span>body<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Fri, 15 Jan 2016 23:47:33 GMT<span class="pl-pds">"</span></span>
+    }
+</pre></div>
 
 <p>The next step is too convert the UTC DateTime value to the Unix TimeStamp, which is a NET double type.</p>
 
 <h3>
 <a id="conversion" class="anchor" href="#conversion" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Conversion</h3>
 
-<p>Designer View
-<img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/Conversion.png" alt=""></p>
+<h5>
+<a id="designer-view" class="anchor" href="#designer-view" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Designer View</h5>
 
-<p>Code View</p>
+<p><img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/Conversion.png" alt="Conversion"></p>
 
-<pre><code>"Conversion": {
-    "conditions": [
-    {
-        "dependsOn": "GetUtcDate"
-    }
-    ],
-    "inputs": {
-    "method": "post",
-    "queries": {
-        "currentDateTime": "@{body('GetUtcDate')}"
+<h5>
+<a id="code-view" class="anchor" href="#code-view" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Code View</h5>
+
+<div class="highlight highlight-source-json"><pre>
+    <span class="pl-s"><span class="pl-pds">"</span>Conversion<span class="pl-pds">"</span></span>: {
+        <span class="pl-s"><span class="pl-pds">"</span>conditions<span class="pl-pds">"</span></span>: [
+        {
+            <span class="pl-s"><span class="pl-pds">"</span>dependsOn<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>GetUtcDate<span class="pl-pds">"</span></span>
+        }
+        ],
+        <span class="pl-s"><span class="pl-pds">"</span>inputs<span class="pl-pds">"</span></span>: {
+        <span class="pl-s"><span class="pl-pds">"</span>method<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>post<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>queries<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>currentDateTime<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>@{body('GetUtcDate')}<span class="pl-pds">"</span></span>
+        },
+        <span class="pl-s"><span class="pl-pds">"</span>uri<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>https://docdbnotificationapi-debug.azurewebsites.net/api/Conversion<span class="pl-pds">"</span></span>
+        },
+        <span class="pl-s"><span class="pl-pds">"</span>metadata<span class="pl-pds">"</span></span>: {
+        <span class="pl-s"><span class="pl-pds">"</span>apiDefinitionUrl<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>https://docdbnotificationapi-debug.azurewebsites.net/swagger/docs/v1<span class="pl-pds">"</span></span>
+        },
+        <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Http<span class="pl-pds">"</span></span>
     },
-    "uri": "https://docdbnotificationapi-debug.azurewebsites.net/api/Conversion"
-    },
-    "metadata": {
-    "apiDefinitionUrl": "https://docdbnotificationapi-debug.azurewebsites.net/swagger/docs/v1"
-    },
-    "type": "Http"
-},
-</code></pre>
+</pre></div>
 
 <p>In this step you pass in the value returned from the GetUTCDate.  There is a dependsOn condition, which means that the GetUTCDate action must complete successfully. If not then this action is skipped. </p>
 
@@ -386,64 +397,73 @@ To fire your trigger, you will need a CallbackURL.  You will learn how to genera
 <h4>
 <a id="operations-1" class="anchor" href="#operations-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Operations</h4>
 
-<p><strong>Request</strong></p>
+<h5>
+<a id="request" class="anchor" href="#request" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Request</h5>
 
-<pre><code>{
-    "uri": "https://docdbnotificationapi-debug.azurewebsites.net/api/Conversion",
-    "method": "post",
-    "queries": {
-    "currentDateTime": "Fri, 15 Jan 2016 23:47:33 GMT"
-    }
-}   
-</code></pre>
+<div class="highlight highlight-source-json"><pre>
+    {
+        <span class="pl-s"><span class="pl-pds">"</span>uri<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>https://docdbnotificationapi-debug.azurewebsites.net/api/Conversion<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>method<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>post<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>queries<span class="pl-pds">"</span></span>: {
+        <span class="pl-s"><span class="pl-pds">"</span>currentDateTime<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Fri, 15 Jan 2016 23:47:33 GMT<span class="pl-pds">"</span></span>
+        }
+    }   </pre></div>
 
-<p><strong>Response</strong></p>
+<h5>
+<a id="response" class="anchor" href="#response" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Response</h5>
 
-<pre><code>{
-    "statusCode": 200,
-    "headers": {
-    "pragma": "no-cache",
-    "cache-Control": "no-cache",
-    "date": "Fri, 26 Feb 2016 15:47:33 GMT",
-    "server": "Microsoft-IIS/8.0",
-    "x-AspNet-Version": "4.0.30319",
-    "x-Powered-By": "ASP.NET"
-    },
-    "body": 1452901653
-}
-</code></pre>
+<div class="highlight highlight-source-json"><pre>    {
+        <span class="pl-s"><span class="pl-pds">"</span>statusCode<span class="pl-pds">"</span></span>: <span class="pl-c1">200</span>,
+        <span class="pl-s"><span class="pl-pds">"</span>headers<span class="pl-pds">"</span></span>: {
+          <span class="pl-s"><span class="pl-pds">"</span>pragma<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>no-cache<span class="pl-pds">"</span></span>,
+          <span class="pl-s"><span class="pl-pds">"</span>cache-Control<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>no-cache<span class="pl-pds">"</span></span>,
+          <span class="pl-s"><span class="pl-pds">"</span>date<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Fri, 26 Feb 2016 15:47:33 GMT<span class="pl-pds">"</span></span>,
+          <span class="pl-s"><span class="pl-pds">"</span>server<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Microsoft-IIS/8.0<span class="pl-pds">"</span></span>,
+          <span class="pl-s"><span class="pl-pds">"</span>x-AspNet-Version<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>4.0.30319<span class="pl-pds">"</span></span>,
+          <span class="pl-s"><span class="pl-pds">"</span>x-Powered-By<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>ASP.NET<span class="pl-pds">"</span></span>
+        },
+        <span class="pl-s"><span class="pl-pds">"</span>body<span class="pl-pds">"</span></span>: <span class="pl-c1">1452901653</span>
+    }</pre></div>
 
 <p>In the next action, you will do a POST operation to our API App.</p>
 
 <h3>
 <a id="getdocuments" class="anchor" href="#getdocuments" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>GetDocuments</h3>
 
-<p>Designer View
-<img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/GetDocuments.png" alt=""></p>
+<h5>
+<a id="designer-view-1" class="anchor" href="#designer-view-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Designer View</h5>
 
-<p>Code View</p>
+<p><img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/GetDocuments.png" alt="Get Documents"></p>
 
-<pre><code>"GetDocuments": {
-    "conditions": [
-    {
-        "dependsOn": "Conversion"
-    }
-    ],
-    "inputs": {
-    "method": "post",
-    "queries": {
-        "unixTimeStamp": "@{body('Conversion')}"
-    },
-    "uri": "https://docdbnotificationapi-debug.azurewebsites.net/api/Patient"
-    },
-    "metadata": {
-    "apiDefinitionUrl": "https://docdbnotificationapi-debug.azurewebsites.net/swagger/docs/v1"
-    },
-    "type": "Http"
-},
-</code></pre>
+<h5>
+<a id="code-view-1" class="anchor" href="#code-view-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Code View</h5>
 
-<p>For the GetDocuments action you are going to pass in the response body from the Conversion action. This is a parameter in the Uri; unixTimeStamp=@{body('Conversion')}</p>
+<div class="highlight highlight-source-json"><pre>
+    <span class="pl-s"><span class="pl-pds">"</span>GetDocuments<span class="pl-pds">"</span></span>: {
+        <span class="pl-s"><span class="pl-pds">"</span>conditions<span class="pl-pds">"</span></span>: [
+        {
+            <span class="pl-s"><span class="pl-pds">"</span>dependsOn<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Conversion<span class="pl-pds">"</span></span>
+        }
+        ],
+        <span class="pl-s"><span class="pl-pds">"</span>inputs<span class="pl-pds">"</span></span>: {
+        <span class="pl-s"><span class="pl-pds">"</span>method<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>post<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>queries<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>unixTimeStamp<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>@{body('Conversion')}<span class="pl-pds">"</span></span>
+        },
+        <span class="pl-s"><span class="pl-pds">"</span>uri<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>https://docdbnotificationapi-debug.azurewebsites.net/api/Patient<span class="pl-pds">"</span></span>
+        },
+        <span class="pl-s"><span class="pl-pds">"</span>metadata<span class="pl-pds">"</span></span>: {
+        <span class="pl-s"><span class="pl-pds">"</span>apiDefinitionUrl<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>https://docdbnotificationapi-debug.azurewebsites.net/swagger/docs/v1<span class="pl-pds">"</span></span>
+        },
+        <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Http<span class="pl-pds">"</span></span>
+    },
+</pre></div>
+
+<p>For the GetDocuments action you are going to pass in the response body from the Conversion action. This is a parameter in the Uri;</p>
+
+<div class="highlight highlight-source-cs"><pre>
+    unixTimeStamp=@{body(<span class="pl-s"><span class="pl-pds">'</span>Conversion<span class="pl-pds">'</span></span>)}
+</pre></div>
 
 <p>The QueryDocuments action does a Http POST operation to the API App. . </p>
 
@@ -452,198 +472,210 @@ To fire your trigger, you will need a CallbackURL.  You will learn how to genera
 <h4>
 <a id="operations-2" class="anchor" href="#operations-2" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Operations</h4>
 
-<p><strong>Request</strong></p>
+<h5>
+<a id="request-1" class="anchor" href="#request-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Request</h5>
 
-<pre><code>{
-    "uri": "https://docdbnotificationapi-debug.azurewebsites.net/api/Patient",
-    "method": "post",
-    "queries": {
-    "unixTimeStamp": "1452901653"
-    }
-}
-</code></pre>
+<div class="highlight highlight-source-json"><pre>    {
+        <span class="pl-s"><span class="pl-pds">"</span>uri<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>https://docdbnotificationapi-debug.azurewebsites.net/api/Patient<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>method<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>post<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>queries<span class="pl-pds">"</span></span>: {
+        <span class="pl-s"><span class="pl-pds">"</span>unixTimeStamp<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>1452901653<span class="pl-pds">"</span></span>
+        }
+    }</pre></div>
 
-<p><strong>Response</strong></p>
+<h5>
+<a id="response-1" class="anchor" href="#response-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Response</h5>
 
-<pre><code>{
-    "statusCode": 200,
-    "headers": {
-    "pragma": "no-cache",
-    "cache-Control": "no-cache",
-    "date": "Fri, 26 Feb 2016 15:47:35 GMT",
-    "server": "Microsoft-IIS/8.0",
-    "x-AspNet-Version": "4.0.30319",
-    "x-Powered-By": "ASP.NET"
-    },
-    "body": [
-    {
-        "id": "xcda",
-        "_rid": "vCYLAP2k6gAXAAAAAAAAAA==",
-        "_self": "dbs/vCYLAA==/colls/vCYLAP2k6gA=/docs/vCYLAP2k6gAXAAAAAAAAAA==/",
-        "_ts": 1454874620,
-        "_etag": "\"00007d01-0000-0000-0000-56b79ffc0000\"",
-        "resourceType": "Patient",
-        "text": {
-        "status": "generated",
-        "div": "&lt;div&gt;\n      \n      &lt;p&gt;Henry Levin the 7th&lt;/p&gt;\n    \n    &lt;/div&gt;"
+<div class="highlight highlight-source-json"><pre>    {
+        <span class="pl-s"><span class="pl-pds">"</span>statusCode<span class="pl-pds">"</span></span>: <span class="pl-c1">200</span>,
+        <span class="pl-s"><span class="pl-pds">"</span>headers<span class="pl-pds">"</span></span>: {
+        <span class="pl-s"><span class="pl-pds">"</span>pragma<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>no-cache<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>cache-Control<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>no-cache<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>date<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Fri, 26 Feb 2016 15:47:35 GMT<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>server<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Microsoft-IIS/8.0<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>x-AspNet-Version<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>4.0.30319<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>x-Powered-By<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>ASP.NET<span class="pl-pds">"</span></span>
         },
-        "identifier": [
+        <span class="pl-s"><span class="pl-pds">"</span>body<span class="pl-pds">"</span></span>: [
         {
-            "use": "usual",
-            "type": {
-            "coding": [
-                {
-                "system": "http://hl7.org/fhir/v2/0203",
-                "code": "MR"
-                }
-            ]
+            <span class="pl-s"><span class="pl-pds">"</span>id<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>xcda<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>_rid<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>vCYLAP2k6gAXAAAAAAAAAA==<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>_self<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>dbs/vCYLAA==/colls/vCYLAP2k6gA=/docs/vCYLAP2k6gAXAAAAAAAAAA==/<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>_ts<span class="pl-pds">"</span></span>: <span class="pl-c1">1454874620</span>,
+            <span class="pl-s"><span class="pl-pds">"</span>_etag<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span><span class="pl-cce">\"</span>00007d01-0000-0000-0000-56b79ffc0000<span class="pl-cce">\"</span><span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>resourceType<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Patient<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>text<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>status<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>generated<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>div<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>&lt;div&gt;<span class="pl-cce">\n</span>      <span class="pl-cce">\n</span>      &lt;p&gt;Henry Levin the 7th&lt;/p&gt;<span class="pl-cce">\n</span>    <span class="pl-cce">\n</span>    &lt;/div&gt;<span class="pl-pds">"</span></span>
             },
-            "system": "urn:oid:2.16.840.1.113883.19.5",
-            "value": "12345"
-        }
-        ],
-        "active": true,
-        "name": [
-        {
-                "family": [
-                    "Levin"
-                ],
-                "given": [
-                    "Henry"
+            <span class="pl-s"><span class="pl-pds">"</span>identifier<span class="pl-pds">"</span></span>: [
+            {
+                <span class="pl-s"><span class="pl-pds">"</span>use<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>usual<span class="pl-pds">"</span></span>,
+                <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: {
+                <span class="pl-s"><span class="pl-pds">"</span>coding<span class="pl-pds">"</span></span>: [
+                    {
+                    <span class="pl-s"><span class="pl-pds">"</span>system<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>http://hl7.org/fhir/v2/0203<span class="pl-pds">"</span></span>,
+                    <span class="pl-s"><span class="pl-pds">"</span>code<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>MR<span class="pl-pds">"</span></span>
+                    }
                 ]
+                },
+                <span class="pl-s"><span class="pl-pds">"</span>system<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>urn:oid:2.16.840.1.113883.19.5<span class="pl-pds">"</span></span>,
+                <span class="pl-s"><span class="pl-pds">"</span>value<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>12345<span class="pl-pds">"</span></span>
             }
-        ],
-        "gender": "male",
-        "birthDate": "1932-09-24",
-        "managingOrganization": {
-            "reference": "Organization/2.16.840.1.113883.19.5",
-            "display": "Good Health Clinic"
-        }
-    },
-</code></pre>
+            ],
+            <span class="pl-s"><span class="pl-pds">"</span>active<span class="pl-pds">"</span></span>: <span class="pl-c1">true</span>,
+            <span class="pl-s"><span class="pl-pds">"</span>name<span class="pl-pds">"</span></span>: [
+            {
+                    <span class="pl-s"><span class="pl-pds">"</span>family<span class="pl-pds">"</span></span>: [
+                        <span class="pl-s"><span class="pl-pds">"</span>Levin<span class="pl-pds">"</span></span>
+                    ],
+                    <span class="pl-s"><span class="pl-pds">"</span>given<span class="pl-pds">"</span></span>: [
+                        <span class="pl-s"><span class="pl-pds">"</span>Henry<span class="pl-pds">"</span></span>
+                    ]
+                }
+            ],
+            <span class="pl-s"><span class="pl-pds">"</span>gender<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>male<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>birthDate<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>1932-09-24<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>managingOrganization<span class="pl-pds">"</span></span>: {
+                <span class="pl-s"><span class="pl-pds">"</span>reference<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Organization/2.16.840.1.113883.19.5<span class="pl-pds">"</span></span>,
+                <span class="pl-s"><span class="pl-pds">"</span>display<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Good Health Clinic<span class="pl-pds">"</span></span>
+            }
+        },
+</pre></div>
 
 <p>The next action is to save the documents to Google Drive. </p>
 
 <h3>
 <a id="create-file" class="anchor" href="#create-file" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Create File</h3>
 
-<p>Designer View
-<img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/CreateFile.png" alt=""></p>
+<h5>
+<a id="designer-view-2" class="anchor" href="#designer-view-2" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Designer View</h5>
 
-<p>Code View</p>
+<p><img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/CreateFile.png" alt="Create File"></p>
 
-<pre><code>"Create_file": {
-    "conditions": [
-    {
-        "dependsOn": "GetDocuments"
-    }
-    ],
-    "inputs": {
-    "body": "@decodeDataUri(concat('data:application/octet-stream,',encodeURIComponent(string(body('GetDocuments')))))",
-    "host": {
-        "api": {
-        "runtimeUrl": "https://logic-apis-westus.azure-apim.net/apim/googledrive"
-        },
-        "connection": {
-        "name": "@parameters('$connections')['googledrive']['connectionId']"
+<h5>
+<a id="code-view-2" class="anchor" href="#code-view-2" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Code View</h5>
+
+<div class="highlight highlight-source-json"><pre>
+    <span class="pl-s"><span class="pl-pds">"</span>Create_file<span class="pl-pds">"</span></span>: {
+        <span class="pl-s"><span class="pl-pds">"</span>conditions<span class="pl-pds">"</span></span>: [
+        {
+            <span class="pl-s"><span class="pl-pds">"</span>dependsOn<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>GetDocuments<span class="pl-pds">"</span></span>
         }
+        ],
+        <span class="pl-s"><span class="pl-pds">"</span>inputs<span class="pl-pds">"</span></span>: {
+        <span class="pl-s"><span class="pl-pds">"</span>body<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>@decodeDataUri(concat('data:application/octet-stream,',encodeURIComponent(string(body('GetDocuments')))))<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>host<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>api<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>runtimeUrl<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>https://logic-apis-westus.azure-apim.net/apim/googledrive<span class="pl-pds">"</span></span>
+            },
+            <span class="pl-s"><span class="pl-pds">"</span>connection<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>name<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>@parameters('$connections')['googledrive']['connectionId']<span class="pl-pds">"</span></span>
+            }
+        },
+        <span class="pl-s"><span class="pl-pds">"</span>method<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>post<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>path<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>/datasets/default/files<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>queries<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>folderPath<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>/Patient<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>name<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Patient_@{guid()}.json<span class="pl-pds">"</span></span>
+        }
+        },
+        <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>ApiConnection<span class="pl-pds">"</span></span>
     },
-    "method": "post",
-    "path": "/datasets/default/files",
-    "queries": {
-        "folderPath": "/Patient",
-        "name": "Patient_@{guid()}.json"
-    }
-    },
-    "type": "ApiConnection"
-},
-</code></pre>
+</pre></div>
 
-<p>The code is generated from action in the designer. You don’t have to modify the code.</p>
+<p>The code is generated from action in the designer. You don�t have to modify the code.</p>
 
 <p>If you are not familiar with using the Google Drive Api,  you can view the documentation <a href="https://azure.microsoft.com/en-us/documentation/articles/create-api-googledrive/">here</a>.</p>
 
 <h4>
 <a id="operations-3" class="anchor" href="#operations-3" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Operations</h4>
 
-<p><strong>Request</strong></p>
+<h5>
+<a id="request-2" class="anchor" href="#request-2" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Request</h5>
 
-<pre><code>"host": {
-    "api": {
-        "runtimeUrl": "https://logic-apis-westus.azure-apim.net/apim/googledrive"
-    },
-    "connection": {
-        "name": "subscriptions/f1334a6f-c079-4e5d-b002-e80326d2492c/resourceGroups/Api-Default-Central-US/providers/Microsoft.Web/connections/F6805CA2-462C-4D28-86D7-4C4E6953EC0F"
-    }
-    },
-    "method": "post",
-    "path": "/datasets/default/files",
-    "queries": {
-    "folderPath": "/Patient",
-    "name": "Patient_47a2a0dc-640d-4f01-be38-c74690d085cb.json"
-    },
-    "body": {
-    "$content-encoding": null,
-    "$content-type": "application/octet-stream;charset=us-ascii",
-    "$content": "W3siaWQiOiJ4Y2RhIiwiX3JpZCI6InZDWUxBUDJrNmdBWEFBQUFBQUFBQUE9PSIsIl9zZWxmIjoiZGJzL3ZDWUxBQT09L2NvbGxzL3ZDWUxBUDJrNmdBPS9kb2NzL3ZDWUxBUDJrNmdBWEFBQUFBQUFBQUE9PS8iLCJfdHMiOjE0NTQ4NzQ2MjAsIl9ldGFnIjoiXCIwMDAwN2QwMS0wMDAwLTAwMDAtMDAwMC01NmI3OWZmYzAwMDBcIiIsInJlc291cmNlVHlwZSI6IlBhdGllbnQiLCJ0ZXh0Ijp7InN0YXR1cyI6ImdlbmVyYXRlZCIsImRpdiI6IjxkaXY+XG4gICAgICBcbiAgICAgIDxwPkhlbnJ5IExldmluIHRoZSA3dGg8L3A+XG4gICAgXG4gICAgPC9kaXY+In0sImlkZW50aWZpZXIiOlt7InVzZSI6InVzdWFsIiwidHlwZSI6eyJjb2RpbmciOlt7InN5c3RlbSI6Imh0dHA6Ly9obDcub3JnL2ZoaXIvdjIvMDIwMyIsImNvZGUiOiJNUiJ9XX0sInN5c3RlbSI6InVybjpvaWQ6Mi4xNi44NDAuMS4xMTM4ODMuMTkuNSIsInZhbHVlIjoiMTIzNDUifV0sImFjdGl2ZSI6dHJ1ZSwibmFtZSI6W3siZmFtaWx5IjpbIkxldmluIl0sImdpdmVuIjpbIkhlbnJ5Il19XSwiZ2VuZGVyIjoibWFsZSIsImJpcnRoRGF0ZSI6IjE5MzItMDktMjQiLCJtYW5hZ2luZ09yZ2FuaXphdGlvbiI6eyJyZWZlcmVuY2UiOiJPcmdhbml6YXRpb24vMi4xNi44NDAuMS4xMTM4ODMuMTkuNSIsImRpc3BsYXkiOiJHb29kIEhlYWx0aCBDbGluaWMifX0seyJpZCI6InVzMDEiLCJfcmlkIjoidkNZTEFQMms2Z0FaQUFBQUFBQUFBQT09IiwiX3NlbGYiOiJkYnMvdkNZTEFBPT0vY29sbHMvdkNZTEFQMms2Z0E9L2RvY3MvdkNZTEFQMms2Z0FaQUFBQUFBQUFBQT09LyIsIl90cyI6MTQ1NDg3NDYyMCwiX2V0YWciOiJcIjAwMDA3ZjAxLTAwMDAtMDAwMC0wMDAwLTU2Yjc5ZmZjMDAwMFwiIiwicmVzb3VyY2VUeXBlIjoiUGF0aWVudC......
-</code></pre>
+<div class="highlight highlight-source-json"><pre>
+    <span class="pl-s"><span class="pl-pds">"</span>host<span class="pl-pds">"</span></span>: {
+        <span class="pl-s"><span class="pl-pds">"</span>api<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>runtimeUrl<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>https://logic-apis-westus.azure-apim.net/apim/googledrive<span class="pl-pds">"</span></span>
+        },
+        <span class="pl-s"><span class="pl-pds">"</span>connection<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>name<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>subscriptions/f1334a6f-c079-4e5d-b002-e80326d2492c/resourceGroups/Api-Default-Central-US/providers/Microsoft.Web/connections/F6805CA2-462C-4D28-86D7-4C4E6953EC0F<span class="pl-pds">"</span></span>
+        }
+        },
+        <span class="pl-s"><span class="pl-pds">"</span>method<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>post<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>path<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>/datasets/default/files<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>queries<span class="pl-pds">"</span></span>: {
+        <span class="pl-s"><span class="pl-pds">"</span>folderPath<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>/Patient<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>name<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Patient_47a2a0dc-640d-4f01-be38-c74690d085cb.json<span class="pl-pds">"</span></span>
+        },
+        <span class="pl-s"><span class="pl-pds">"</span>body<span class="pl-pds">"</span></span>: {
+        <span class="pl-s"><span class="pl-pds">"</span>$content-encoding<span class="pl-pds">"</span></span>: <span class="pl-c1">null</span>,
+        <span class="pl-s"><span class="pl-pds">"</span>$content-type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>application/octet-stream;charset=us-ascii<span class="pl-pds">"</span></span>,
+        "$content": "W3siaWQiOiJ4Y2RhIiwiX3JpZCI6InZDWUxBUDJrNmdBWEFBQUFBQUFBQUE9PSIsIl9zZWxmIjoiZGJzL3ZDWUxBQT09L2NvbGxzL3ZDWUxBUDJrNmdBPS9kb2NzL3ZDWUxBUDJrNmdBWEFBQUFBQUFBQUE9PS8iLCJfdHMiOjE0NTQ4NzQ2MjAsIl9ldGFnIjoiXCIwMDAwN2QwMS0wMDAwLTAwMDAtMDAwMC01NmI3OWZmYzAwMDBcIiIsInJlc291cmNlVHlwZSI6IlBhdGllbnQiLCJ0ZXh0Ijp7InN0YXR1cyI6ImdlbmVyYXRlZCIsImRpdiI6IjxkaXY+XG4gICAgICBcbiAgICAgIDxwPkhlbnJ5IExldmluIHRoZSA3dGg8L3A+XG4gICAgXG4gICAgPC9kaXY+In0sImlkZW50aWZpZXIiOlt7InVzZSI6InVzdWFsIiwidHlwZSI6eyJjb2RpbmciOlt7InN5c3RlbSI6Imh0dHA6Ly9obDcub3JnL2ZoaXIvdjIvMDIwMyIsImNvZGUiOiJNUiJ9XX0sInN5c3RlbSI6InVybjpvaWQ6Mi4xNi44NDAuMS4xMTM4ODMuMTkuNSIsInZhbHVlIjoiMTIzNDUifV0sImFjdGl2ZSI6dHJ1ZSwibmFtZSI6W3siZmFtaWx5IjpbIkxldmluIl0sImdpdmVuIjpbIkhlbnJ5Il19XSwiZ2VuZGVyIjoibWFsZSIsImJpcnRoRGF0ZSI6IjE5MzItMDktMjQiLCJtYW5hZ2luZ09yZ2FuaXphdGlvbiI6eyJyZWZlcmVuY2UiOiJPcmdhbml6YXRpb24vMi4xNi44NDAuMS4xMTM4ODMuMTkuNSIsImRpc3BsYXkiOiJHb29kIEhlYWx0aCBDbGluaWMifX0seyJpZCI6InVzMDEiLCJfcmlkIjoidkNZTEFQMms2Z0FaQUFBQUFBQUFBQT09IiwiX3NlbGYiOiJkYnMvdkNZTEFBPT0vY29sbHMvdkNZTEFQMms2Z0E9L2RvY3MvdkNZTEFQMms2Z0FaQUFBQUFBQUFBQT09LyIsIl90cyI6MTQ1NDg3NDYyMCwiX2V0YWciOiJcIjAwMDA3ZjAxLTAwMDAtMDAwMC0wMDAwLTU2Yjc5ZmZjMDAwMFwiIiwicmVzb3VyY2VUeXBlIjoiUGF0aWVudC......
+</pre></div>
 
-<p><strong>Response</strong></p>
+<h5>
+<a id="response-2" class="anchor" href="#response-2" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Response</h5>
 
-<pre><code>{
-    "statusCode": 200,
-    "headers": {
-    "pragma": "no-cache",
-    "x-ms-request-id": "2b2f7c57-2623-4d71-8e53-45c26b30ea9d",
-    "cache-Control": "no-cache",
-    "date": "Fri, 26 Feb 2016 15:47:36 GMT",
-    "set-Cookie": "ARRAffinity=29e552cea7db23196f7ffa644003eaaf39bc8eb6dd811911f669d13ab7424faf;Path=/;Domain=127.0.0.1",
-    "server": "Microsoft-HTTPAPI/2.0",
-    "x-AspNet-Version": "4.0.30319",
-    "x-Powered-By": "ASP.NET"
-    },
-    "body": {
-    "Id": "0B0nBzHyMV-_NRGRDcDNMSFAxWFE",
-    "Name": "Patient_47a2a0dc-640d-4f01-be38-c74690d085cb.json",
-    "DisplayName": "Patient_47a2a0dc-640d-4f01-be38-c74690d085cb.json",
-    "Path": "/Patient/Patient_47a2a0dc-640d-4f01-be38-c74690d085cb.json",
-    "LastModified": "2016-02-26T15:47:36.215Z",
-    "Size": 65647,
-    "MediaType": "application/octet-stream",
-    "IsFolder": false,
-    "ETag": "\"c-g_a-1OtaH-kNQ4WBoXLp3Zv9s/MTQ1NjUwMTY1NjIxNQ\"",
-    "FileLocator": "0B0nBzHyMV-_NRGRDcDNMSFAxWFE"
-    }
-}
-</code></pre>
+<div class="highlight highlight-source-json"><pre>
+    {
+        <span class="pl-s"><span class="pl-pds">"</span>statusCode<span class="pl-pds">"</span></span>: <span class="pl-c1">200</span>,
+        <span class="pl-s"><span class="pl-pds">"</span>headers<span class="pl-pds">"</span></span>: {
+        <span class="pl-s"><span class="pl-pds">"</span>pragma<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>no-cache<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>x-ms-request-id<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>2b2f7c57-2623-4d71-8e53-45c26b30ea9d<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>cache-Control<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>no-cache<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>date<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Fri, 26 Feb 2016 15:47:36 GMT<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>set-Cookie<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>ARRAffinity=29e552cea7db23196f7ffa644003eaaf39bc8eb6dd811911f669d13ab7424faf;Path=/;Domain=127.0.0.1<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>server<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Microsoft-HTTPAPI/2.0<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>x-AspNet-Version<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>4.0.30319<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>x-Powered-By<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>ASP.NET<span class="pl-pds">"</span></span>
+        },
+        <span class="pl-s"><span class="pl-pds">"</span>body<span class="pl-pds">"</span></span>: {
+        <span class="pl-s"><span class="pl-pds">"</span>Id<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>0B0nBzHyMV-_NRGRDcDNMSFAxWFE<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>Name<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Patient_47a2a0dc-640d-4f01-be38-c74690d085cb.json<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>DisplayName<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Patient_47a2a0dc-640d-4f01-be38-c74690d085cb.json<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>Path<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>/Patient/Patient_47a2a0dc-640d-4f01-be38-c74690d085cb.json<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>LastModified<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>2016-02-26T15:47:36.215Z<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>Size<span class="pl-pds">"</span></span>: <span class="pl-c1">65647</span>,
+        <span class="pl-s"><span class="pl-pds">"</span>MediaType<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>application/octet-stream<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>IsFolder<span class="pl-pds">"</span></span>: <span class="pl-c1">false</span>,
+        <span class="pl-s"><span class="pl-pds">"</span>ETag<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span><span class="pl-cce">\"</span>c-g_a-1OtaH-kNQ4WBoXLp3Zv9s/MTQ1NjUwMTY1NjIxNQ<span class="pl-cce">\"</span><span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>FileLocator<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>0B0nBzHyMV-_NRGRDcDNMSFAxWFE<span class="pl-pds">"</span></span>
+        }
+    }</pre></div>
 
 <p>Your last step is to send an email notification</p>
 
 <h3>
 <a id="sendemail" class="anchor" href="#sendemail" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>sendEmail</h3>
 
-<p>Designer View
-<img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/SendEmail.png" alt=""></p>
+<h5>
+<a id="designer-view-3" class="anchor" href="#designer-view-3" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Designer View</h5>
 
-<p>Code View</p>
+<p><img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/SendEmail.png" alt="Send Email"></p>
 
-<pre><code>"sendMail": {
-    "conditions": [
-    {
-        "dependsOn": "GetDocuments"
-    }
-    ],
-    "inputs": {
-    "body": "api_user=@{triggerBody()['sendgridUsername']}&amp;api_key=@{triggerBody()['sendgridPassword']}&amp;from=@{parameters('fromAddress')}&amp;to=@{triggerBody()['EmailTo']}&amp;subject=@{triggerBody()['Subject']}&amp;text=@{int(length(body('GetDocuments')))} Documents Found",
-    "headers": {
-        "Content-type": "application/x-www-form-urlencoded"
-    },
-    "method": "POST",
-    "uri": "https://api.sendgrid.com/api/mail.send.json"
-    },
-    "type": "Http"
-}
-</code></pre>
+<h5>
+<a id="code-view-3" class="anchor" href="#code-view-3" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Code View</h5>
+
+<div class="highlight highlight-source-json"><pre>
+
+    <span class="pl-s"><span class="pl-pds">"</span>sendMail<span class="pl-pds">"</span></span>: {
+        <span class="pl-s"><span class="pl-pds">"</span>conditions<span class="pl-pds">"</span></span>: [
+        {
+            <span class="pl-s"><span class="pl-pds">"</span>dependsOn<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>GetDocuments<span class="pl-pds">"</span></span>
+        }
+        ],
+        <span class="pl-s"><span class="pl-pds">"</span>inputs<span class="pl-pds">"</span></span>: {
+        <span class="pl-s"><span class="pl-pds">"</span>body<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>api_user=@{triggerBody()['sendgridUsername']}&amp;api_key=@{triggerBody()['sendgridPassword']}&amp;from=@{parameters('fromAddress')}&amp;to=@{triggerBody()['EmailTo']}&amp;subject=@{triggerBody()['Subject']}&amp;text=@{int(length(body('GetDocuments')))} Documents Found<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>headers<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>Content-type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>application/x-www-form-urlencoded<span class="pl-pds">"</span></span>
+        },
+        <span class="pl-s"><span class="pl-pds">"</span>method<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>POST<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>uri<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>https://api.sendgrid.com/api/mail.send.json<span class="pl-pds">"</span></span>
+        },
+        <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Http<span class="pl-pds">"</span></span>
+    }</pre></div>
 
 <p>In this action you send an email notification.  You are using <a href="https://sendgrid.com/marketing/sendgrid-services?cvosrc=PPC.Bing.sendgrib&amp;cvo_cid=SendGrid%20-%20US%20-%20Brand%20-%20(English)&amp;mc=Paid%20Search&amp;mcd=BingAds&amp;keyword=sendgrib&amp;network=o&amp;matchtype=e&amp;mobile=&amp;content=&amp;search=1&amp;utm_source=bing&amp;utm_medium=cpc&amp;utm_term=%5Bsendgrib%5D&amp;utm_content=%21acq%21v2%2134335083397-8303227637-1649139544&amp;utm_campaign=SendGrid+-+US+-+Brand+-+%28English%29">SendGrid</a>.   </p>
 
@@ -653,76 +685,83 @@ To fire your trigger, you will need a CallbackURL.  You will learn how to genera
 
 <p>The authorization parameters are in the trigger properties</p>
 
-<pre><code>},
-    "sendgridPassword": {
-         "type": "SecureString"
-     },
-     "sendgridUsername": {
-        "type": "String"
-     }
+<div class="highlight highlight-source-json"><pre>
+    },
+        <span class="pl-s"><span class="pl-pds">"</span>sendgridPassword<span class="pl-pds">"</span></span>: {
+             <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>SecureString<span class="pl-pds">"</span></span>
+         },
+         <span class="pl-s"><span class="pl-pds">"</span>sendgridUsername<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>String<span class="pl-pds">"</span></span>
+         }
 
-    In addition, other parameters are static values set in the Parameters section of the Logic App. These are:
-    },
-    "toAddress": {
-        "defaultValue": "XXXX@XXXX.com",
-        "type": "String"
-    },
-    "fromAddress": {
-        "defaultValue": "XXX@msn.com",
-        "type": "String"
-    },
-    "emailBody": {
-        "defaultValue": "@{string(concat(int(length(actions('QueryDocuments').outputs.body)) Records Found),'/n', actions('QueryDocuments').outputs.body)}",
-        "type": "String"
-    },
-</code></pre>
+        In addition, other parameters are static values set in the Parameters section of the Logic App. These are:
+        },
+        <span class="pl-s"><span class="pl-pds">"</span>toAddress<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>defaultValue<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>XXXX@XXXX.com<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>String<span class="pl-pds">"</span></span>
+        },
+        <span class="pl-s"><span class="pl-pds">"</span>fromAddress<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>defaultValue<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>XXX@msn.com<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>String<span class="pl-pds">"</span></span>
+        },
+        <span class="pl-s"><span class="pl-pds">"</span>emailBody<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>defaultValue<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>@{string(concat(int(length(actions('QueryDocuments').outputs.body)) Records Found),'/n', actions('QueryDocuments').outputs.body)}<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>String<span class="pl-pds">"</span></span>
+        },
+</pre></div>
 
-<p>The emailBody is concatenating the number of Documents returned from the query, which can be “0” or more, along with,  “Records Found”.  The rest of the parameters are set from the Trigger parameters.</p>
+<p>The emailBody is concatenating the number of Documents returned from the query, which can be "0" or more, along with,  "Records Found".  The rest of the parameters are set from the Trigger parameters.</p>
 
-<p>This action depends on the *<em>GetDocuments *</em>action.</p>
+<p>This action depends on the <strong>GetDocuments</strong> action.</p>
 
 <h4>
 <a id="operations-4" class="anchor" href="#operations-4" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Operations</h4>
 
-<p><strong>Request</strong></p>
+<h5>
+<a id="request-3" class="anchor" href="#request-3" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Request</h5>
 
-<pre><code>{
-    "uri": "https://api.sendgrid.com/api/mail.send.json",
-    "method": "POST",
-    "headers": {
-    "Content-type": "application/x-www-form-urlencoded"
-    },
-    "body": "api_user=azure_9d8ef133bd48205fbc841ef82aaa6808@azure.com&amp;api_key=Biz@Talk&amp;from=hse@msn.com&amp;to=hedidin@edidingroup.net&amp;subject=New Patients&amp;text=37 Documents Found"
-}
-</code></pre>
-
-<p><strong>Response</strong>
+<div class="highlight highlight-source-json"><pre>
     {
-        "statusCode": 200,
-        "headers": {
-        "connection": "keep-alive",
-        "x-Frame-Options": "DENY,DENY",
-        "access-Control-Allow-Origin": "<a href="https://sendgrid.com">https://sendgrid.com</a>",
-        "date": "Fri, 26 Feb 2016 15:47:35 GMT",
-        "server": "nginx"
+        <span class="pl-s"><span class="pl-pds">"</span>uri<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>https://api.sendgrid.com/api/mail.send.json<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>method<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>POST<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>headers<span class="pl-pds">"</span></span>: {
+        <span class="pl-s"><span class="pl-pds">"</span>Content-type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>application/x-www-form-urlencoded<span class="pl-pds">"</span></span>
         },
-        "body": {
-        "message": "success"
+        <span class="pl-s"><span class="pl-pds">"</span>body<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>api_user=azure_9d8ef133bd48205fbc841ef82aaa6808@azure.com&amp;api_key=Biz@Talk&amp;from=hse@msn.com&amp;to=hedidin@edidingroup.net&amp;subject=New Patients&amp;text=37 Documents Found<span class="pl-pds">"</span></span>
+    }
+</pre></div>
+
+<h5>
+<a id="response-3" class="anchor" href="#response-3" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Response</h5>
+
+<div class="highlight highlight-source-json"><pre>
+    {
+        <span class="pl-s"><span class="pl-pds">"</span>statusCode<span class="pl-pds">"</span></span>: <span class="pl-c1">200</span>,
+        <span class="pl-s"><span class="pl-pds">"</span>headers<span class="pl-pds">"</span></span>: {
+        <span class="pl-s"><span class="pl-pds">"</span>connection<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>keep-alive<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>x-Frame-Options<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>DENY,DENY<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>access-Control-Allow-Origin<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>https://sendgrid.com<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>date<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Fri, 26 Feb 2016 15:47:35 GMT<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>server<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>nginx<span class="pl-pds">"</span></span>
+        },
+        <span class="pl-s"><span class="pl-pds">"</span>body<span class="pl-pds">"</span></span>: {
+        <span class="pl-s"><span class="pl-pds">"</span>message<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>success<span class="pl-pds">"</span></span>
         }
-    }</p>
+    }</pre></div>
 
 <p>Lastly you want to be able to see the results from your Logic App on the Azure Portal. To do that, you add a parameter to the outputs section.</p>
 
-<pre><code>"outputs": {
-    "Results": {
-        "type": "String",
-        "value": "@{int(length(actions('QueryDocuments').outputs.body))} Records Found"
-    }
-</code></pre>
+<div class="highlight highlight-source-json"><pre>
+    <span class="pl-s"><span class="pl-pds">"</span>outputs<span class="pl-pds">"</span></span>: {
+        <span class="pl-s"><span class="pl-pds">"</span>Results<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>String<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>value<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>@{int(length(actions('QueryDocuments').outputs.body))} Records Found<span class="pl-pds">"</span></span>
+        }
+</pre></div>
 
-<p>This returns the same value that is sent in the email body. The following figure shows an example where “37 Records Found”</p>
+<p>This returns the same value that is sent in the email body. The following figure shows an example where "37 Records Found"</p>
 
-<p><img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/Logic.App.run.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/Logic.App.run.png" alt="Results"></p>
 
 <h2>
 <a id="metrics" class="anchor" href="#metrics" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Metrics</h2>
@@ -735,47 +774,49 @@ To fire your trigger, you will need a CallbackURL.  You will learn how to genera
 
 <p>This Logic App is the trigger that starts the workflow on your main Logic App.</p>
 
-<p>The following figure shows the Designer View.
-<img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/Trigger.Recurrence.png" alt=""></p>
+<p>The following figure shows the Designer View.</p>
 
-<pre><code>{
-    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2015-08-01-preview/workflowdefinition.json#",
-    "actions": {
-    "Http": {
-        "conditions": [],
-        "inputs": {
-        "body": {
-            "EmailTo": "XXXXXX@XXXXX.net",
-            "GetUtcDate_HoursBack": "24",
-            "Subject": "New Patients",
-            "sendgridPassword": "********",
-            "sendgridUsername": "azure_9d8ef133bd48205fbc841ef82aaa6808@azure.com"
+<p><img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/Trigger.Recurrence.png" alt=""></p>
+
+<div class="highlight highlight-source-json"><pre>
+    {
+        <span class="pl-s"><span class="pl-pds">"</span>$schema<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2015-08-01-preview/workflowdefinition.json#<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>actions<span class="pl-pds">"</span></span>: {
+        <span class="pl-s"><span class="pl-pds">"</span>Http<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>conditions<span class="pl-pds">"</span></span>: [],
+            <span class="pl-s"><span class="pl-pds">"</span>inputs<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>body<span class="pl-pds">"</span></span>: {
+                <span class="pl-s"><span class="pl-pds">"</span>EmailTo<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>XXXXXX@XXXXX.net<span class="pl-pds">"</span></span>,
+                <span class="pl-s"><span class="pl-pds">"</span>GetUtcDate_HoursBack<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>24<span class="pl-pds">"</span></span>,
+                <span class="pl-s"><span class="pl-pds">"</span>Subject<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>New Patients<span class="pl-pds">"</span></span>,
+                <span class="pl-s"><span class="pl-pds">"</span>sendgridPassword<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>********<span class="pl-pds">"</span></span>,
+                <span class="pl-s"><span class="pl-pds">"</span>sendgridUsername<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>azure_9d8ef133bd48205fbc841ef82aaa6808@azure.com<span class="pl-pds">"</span></span>
+            },
+            <span class="pl-s"><span class="pl-pds">"</span>method<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>POST<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>uri<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>https://prod-01.westus.logic.azure.com:443/workflows/12a1de57e46645bc9ce7a247df782887/triggers/manual/run?api-version=2015-08-01-preview&amp;sp=%2Ftriggers%2Fmanual%2Frun&amp;sv=1.0&amp;sig=ObTlihr529ATIuvuG-dhxOgBL4JZjItrvPQ8PV6973c<span class="pl-pds">"</span></span>
+            },
+            <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Http<span class="pl-pds">"</span></span>
+        }
         },
-        "method": "POST",
-        "uri": "https://prod-01.westus.logic.azure.com:443/workflows/12a1de57e46645bc9ce7a247df782887/triggers/manual/run?api-version=2015-08-01-preview&amp;sp=%2Ftriggers%2Fmanual%2Frun&amp;sv=1.0&amp;sig=ObTlihr529ATIuvuG-dhxOgBL4JZjItrvPQ8PV6973c"
+        <span class="pl-s"><span class="pl-pds">"</span>contentVersion<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>1.0.0.0<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>outputs<span class="pl-pds">"</span></span>: {
+        <span class="pl-s"><span class="pl-pds">"</span>Results<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>String<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>value<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>@{body('Http')['status']}<span class="pl-pds">"</span></span>
+        }
         },
-        "type": "Http"
+        <span class="pl-s"><span class="pl-pds">"</span>parameters<span class="pl-pds">"</span></span>: {},
+        <span class="pl-s"><span class="pl-pds">"</span>triggers<span class="pl-pds">"</span></span>: {
+        <span class="pl-s"><span class="pl-pds">"</span>recurrence<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>recurrence<span class="pl-pds">"</span></span>: {
+            <span class="pl-s"><span class="pl-pds">"</span>frequency<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Hour<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>interval<span class="pl-pds">"</span></span>: <span class="pl-c1">24</span>
+            },
+            <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Recurrence<span class="pl-pds">"</span></span>
+        }
+        }
     }
-    },
-    "contentVersion": "1.0.0.0",
-    "outputs": {
-    "Results": {
-        "type": "String",
-        "value": "@{body('Http')['status']}"
-    }
-    },
-    "parameters": {},
-    "triggers": {
-    "recurrence": {
-        "recurrence": {
-        "frequency": "Hour",
-        "interval": 24
-        },
-        "type": "Recurrence"
-    }
-    }
-}
-</code></pre>
+</pre></div>
 
 <p>The Trigger is set for a recurrence of twenty-four hours. 
 The Action is an Http Post that uses the Callback URL for the main Logic App. 
@@ -784,42 +825,45 @@ The body contains the parameters that are specified in the JSON Schema. </p>
 <h4>
 <a id="operations-5" class="anchor" href="#operations-5" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Operations</h4>
 
-<p><strong>Request</strong></p>
+<h5>
+<a id="request-4" class="anchor" href="#request-4" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Request</h5>
 
-<pre><code>{
-    "uri": "https://prod-01.westus.logic.azure.com:443/workflows/12a1de57e46645bc9ce7a247df782887/triggers/manual/run?api-version=2015-08-01-preview&amp;sp=%2Ftriggers%2Fmanual%2Frun&amp;sv=1.0&amp;sig=ObTlihr529ATIuvuG-dhxOgBL4JZjItrvPQ8PV6973c",
-    "method": "POST",
-    "body": {
-    "EmailTo": "hedidin@edidingroup.net",
-    "GetUtcDate_HoursBack": "24",
-    "Subject": "New Patients",
-    "sendgridPassword": "Biz@Talk",
-    "sendgridUsername": "azure_9d8ef133bd48205fbc841ef82aaa6808@azure.com"
+<div class="highlight highlight-source-json"><pre>
+    {
+        <span class="pl-s"><span class="pl-pds">"</span>uri<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>https://prod-01.westus.logic.azure.com:443/workflows/12a1de57e46645bc9ce7a247df782887/triggers/manual/run?api-version=2015-08-01-preview&amp;sp=%2Ftriggers%2Fmanual%2Frun&amp;sv=1.0&amp;sig=ObTlihr529ATIuvuG-dhxOgBL4JZjItrvPQ8PV6973c<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>method<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>POST<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>body<span class="pl-pds">"</span></span>: {
+        <span class="pl-s"><span class="pl-pds">"</span>EmailTo<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>hedidin@edidingroup.net<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>GetUtcDate_HoursBack<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>24<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>Subject<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>New Patients<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>sendgridPassword<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Biz@Talk<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>sendgridUsername<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>azure_9d8ef133bd48205fbc841ef82aaa6808@azure.com<span class="pl-pds">"</span></span>
+        }
     }
-}
-</code></pre>
+</pre></div>
 
-<p><strong>Response</strong></p>
+<h5>
+<a id="response-4" class="anchor" href="#response-4" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Response</h5>
 
-<pre><code>{
-    "statusCode": 202,
-    "headers": {
-    "pragma": "no-cache",
-    "x-ms-ratelimit-remaining-workflow-writes": "7486",
-    "x-ms-ratelimit-burst-remaining-workflow-writes": "1248",
-    "x-ms-request-id": "westus:2d440a39-8ba5-4a9c-92a6-f959b8d2357f",
-    "cache-Control": "no-cache",
-    "date": "Thu, 25 Feb 2016 21:01:06 GMT"
-    }
-}
-</code></pre>
+<div class="highlight highlight-source-json"><pre>
+    {
+        <span class="pl-s"><span class="pl-pds">"</span>statusCode<span class="pl-pds">"</span></span>: <span class="pl-c1">202</span>,
+        <span class="pl-s"><span class="pl-pds">"</span>headers<span class="pl-pds">"</span></span>: {
+        <span class="pl-s"><span class="pl-pds">"</span>pragma<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>no-cache<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>x-ms-ratelimit-remaining-workflow-writes<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>7486<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>x-ms-ratelimit-burst-remaining-workflow-writes<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>1248<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>x-ms-request-id<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>westus:2d440a39-8ba5-4a9c-92a6-f959b8d2357f<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>cache-Control<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>no-cache<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>date<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Thu, 25 Feb 2016 21:01:06 GMT<span class="pl-pds">"</span></span>
+        }
+    }</pre></div>
 
-<p>Now let’s look at the API App.</p>
+<p>Now let's look at the API App.</p>
 
 <h2>
 <a id="docdbnotificationapi" class="anchor" href="#docdbnotificationapi" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>DocDBNotificationApi</h2>
 
-<p>Although there are many operations in the app, you are only going to use three.</p>
+<p>Although there are several operations in the app, you are only going to use three.</p>
 
 <ul>
 <li>GetUtcDate</li>
@@ -830,128 +874,135 @@ The body contains the parameters that are specified in the JSON Schema. </p>
 <h3>
 <a id="docdbnotificationapi-operations" class="anchor" href="#docdbnotificationapi-operations" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>DocDBNotificationApi Operations</h3>
 
-<p>Let’s take a look at the Swagger documentation</p>
+<p>Let's take a look at the Swagger documentation</p>
 
 <blockquote>
-<p>NOTE: To allow you to call the operations externally, you need to add a CORS allowed origin value of “*” (without quotes) in the settings of your API App as shown in the following figure.</p>
+<p>NOTE: To allow you to call the operations externally, you need to add a CORS allowed origin value of "*" (without quotes) in the settings of your API App as shown in the following figure.</p>
 </blockquote>
 
-<p><img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/Cors.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/Cors.png" alt="Cors Configuration"></p>
 
-<p><strong>GetUtcDate</strong></p>
+<h4>
+<a id="getutcdate-1" class="anchor" href="#getutcdate-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>GetUtcDate</h4>
 
-<p><img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/getutcdateswagger.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/getutcdateswagger.png" alt="G"></p>
 
-<p><strong>ConvertToTimeStamp</strong></p>
+<h4>
+<a id="converttotimestamp" class="anchor" href="#converttotimestamp" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>ConvertToTimeStamp</h4>
 
-<p><img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/converion%20swagger.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/converion%20swagger.png" alt="Get UTC Date"></p>
 
-<p><strong>QueryForNewPatientDocuments</strong></p>
+<h4>
+<a id="queryfornewpatientdocuments" class="anchor" href="#queryfornewpatientdocuments" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>QueryForNewPatientDocuments</h4>
 
-<p><img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/patientswagger.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/patientswagger.png" alt="Query"></p>
 
-<p>Let’s take a look at the code behind this operations</p>
+<p>Let's take a look at the code behind this operations</p>
 
-<p><strong>GetUtcDate</strong></p>
+<h4>
+<a id="getutcdate-2" class="anchor" href="#getutcdate-2" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>GetUtcDate</h4>
 
-<pre><code>    /// &lt;summary&gt;
-/// Gets the current UTC Date value
-/// &lt;/summary&gt;
-/// &lt;returns&gt;&lt;/returns&gt;
-[HttpGet]
-[Metadata("GetUtcDate", "Gets the current UTC Date value minus the Hours Back")]
-[SwaggerOperation("GetUtcDate")]
-[SwaggerResponse(HttpStatusCode.OK, type: typeof (string))]
-[SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Operation Error")]
-public string GetUtcDate(
-   [Metadata("Hours Back", "How many hours back from the current Date Time")] int hoursBack)
-{
+<div class="highlight highlight-source-cs"><pre>
+    <span class="pl-c">/// &lt;<span class="pl-ent">summary</span>&gt;</span>
+    <span class="pl-c">/// Gets the current UTC Date value</span>
+    <span class="pl-c">/// &lt;/<span class="pl-ent">summary</span>&gt;</span>
+    <span class="pl-c">/// &lt;<span class="pl-ent">returns</span>&gt;&lt;/<span class="pl-ent">returns</span>&gt;</span>
+    [H ttpGet]
+    [Metadata(<span class="pl-s"><span class="pl-pds">"</span>GetUtcDate<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>Gets the current UTC Date value minus the Hours Back<span class="pl-pds">"</span></span>)]
+    [SwaggerOperation(<span class="pl-s"><span class="pl-pds">"</span>GetUtcDate<span class="pl-pds">"</span></span>)]
+    [SwaggerResponse(HttpStatusCode.OK, type: <span class="pl-k">typeof</span> (<span class="pl-k">string</span>))]
+    [SwaggerResponse(HttpStatusCode.InternalServerError, <span class="pl-s"><span class="pl-pds">"</span>Internal Server Operation Error<span class="pl-pds">"</span></span>)]
+    <span class="pl-k">public</span> <span class="pl-k">string</span> GetUtcDate(
+       [Metadata(<span class="pl-s"><span class="pl-pds">"</span>Hours Back<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>How many hours back from the current Date Time<span class="pl-pds">"</span></span>)] <span class="pl-k">int</span> hoursBack)
+    {
 
 
-    return DateTime.UtcNow.AddHours(-hoursBack).ToString("r");
-}
-</code></pre>
+        <span class="pl-k">return</span> DateTime.UtcNow.AddHours(-hoursBack).ToString(<span class="pl-s"><span class="pl-pds">"</span>r<span class="pl-pds">"</span></span>);
+    }</pre></div>
 
 <p>This operation simply returns the returns the current UTC DateTime minus the HoursBack value.</p>
 
-<p><strong>ConvertToTimeStamp</strong></p>
+<h4>
+<a id="converttotimestamp-1" class="anchor" href="#converttotimestamp-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>ConvertToTimeStamp</h4>
 
-<pre><code>    /// &lt;summary&gt;
-    ///     Converts DateTime to double
-    /// &lt;/summary&gt;
-    /// &lt;param name="currentdateTime"&gt;&lt;/param&gt;
-    /// &lt;returns&gt;&lt;/returns&gt;
-    [Metadata("Converts Universal DateTime to number")]
-    [SwaggerResponse(HttpStatusCode.OK, null, typeof (double))]
-    [SwaggerResponse(HttpStatusCode.BadRequest, "DateTime is invalid")]
-    [SwaggerResponse(HttpStatusCode.InternalServerError)]
-    [SwaggerOperation(nameof(ConvertToTimestamp))]
-    public double ConvertToTimestamp(
-        [Metadata("currentdateTime", "DateTime value to convert")] string currentdateTime)
-    {
-        double result;
-
-        try
+<div class="highlight highlight-source-cs"><pre>
+        <span class="pl-c">/// &lt;<span class="pl-ent">summary</span>&gt;</span>
+        <span class="pl-c">///     Converts DateTime to double</span>
+        <span class="pl-c">/// &lt;/<span class="pl-ent">summary</span>&gt;</span>
+        <span class="pl-c">/// &lt;<span class="pl-ent">param</span> <span class="pl-e">name</span>=<span class="pl-s"><span class="pl-pds">"</span>currentdateTime<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">param</span>&gt;</span>
+        <span class="pl-c">/// &lt;<span class="pl-ent">returns</span>&gt;&lt;/<span class="pl-ent">returns</span>&gt;</span>
+        [Metadata(<span class="pl-s"><span class="pl-pds">"</span>Converts Universal DateTime to number<span class="pl-pds">"</span></span>)]
+        [SwaggerResponse(HttpStatusCode.OK, <span class="pl-c1">null</span>, <span class="pl-k">typeof</span> (<span class="pl-k">double</span>))]
+        [SwaggerResponse(HttpStatusCode.BadRequest, <span class="pl-s"><span class="pl-pds">"</span>DateTime is invalid<span class="pl-pds">"</span></span>)]
+        [SwaggerResponse(HttpStatusCode.InternalServerError)]
+        [SwaggerOperation(nameof(ConvertToTimestamp))]
+        <span class="pl-k">public</span> <span class="pl-k">double</span> ConvertToTimestamp(
+            [Metadata(<span class="pl-s"><span class="pl-pds">"</span>currentdateTime<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>DateTime value to convert<span class="pl-pds">"</span></span>)] <span class="pl-k">string</span> currentdateTime)
         {
-            var uncoded = HttpContext.Current.Server.UrlDecode(currentdateTime);
+            <span class="pl-k">double</span> result;
 
-            var newDateTime = DateTime.Parse(uncoded);
-            //create Timespan by subtracting the value provided from the Unix Epoch
-            var span = newDateTime - new DateTime(1970, 1, 1, 0, 0, 0, 0).ToLocalTime();
+            <span class="pl-k">try</span>
+            {
+                <span class="pl-k">var</span> uncoded = HttpContext.Current.Server.UrlDecode(currentdateTime);
 
-            //return the total seconds (which is a UNIX timestamp)
-            result = span.TotalSeconds;
+                <span class="pl-k">var</span> newDateTime = DateTime.Parse(uncoded);
+                <span class="pl-c">//create Timespan by subtracting the value provided from the Unix Epoch</span>
+                <span class="pl-k">var</span> span = newDateTime - <span class="pl-k">new</span> DateTime(<span class="pl-c1">1970</span>, <span class="pl-c1">1</span>, <span class="pl-c1">1</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0</span>).ToLocalTime();
+
+                <span class="pl-c">//return the total seconds (which is a UNIX timestamp)</span>
+                result = span.TotalSeconds;
+            }
+            <span class="pl-k">catch</span> (Exception e)
+            {
+                <span class="pl-k">throw</span> <span class="pl-k">new</span> Exception(<span class="pl-s"><span class="pl-pds">"</span>unable to convert to Timestamp<span class="pl-pds">"</span></span>, e.InnerException);
+            }
+
+            <span class="pl-k">return</span> result;
         }
-        catch (Exception e)
-        {
-            throw new Exception("unable to convert to Timestamp", e.InnerException);
-        }
-
-        return result;
-    }
-</code></pre>
+</pre></div>
 
 <p>This operation converts the response from the GetUtcDate operation to a double value.</p>
 
-<p><strong>QueryForNewPatientDocuments</strong></p>
+<h4>
+<a id="queryfornewpatientdocuments-1" class="anchor" href="#queryfornewpatientdocuments-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>QueryForNewPatientDocuments</h4>
 
-<pre><code>/// &lt;summary&gt;
-    ///     Query for new Patient Documents
-    /// &lt;/summary&gt;
-    /// &lt;param name="unixTimeStamp"&gt;&lt;/param&gt;
-    /// &lt;returns&gt;IList&lt;/returns&gt;
-    [Metadata("QueryForNewDocuments",
-        "Query for new Documents where the Timestamp is greater than or equal to the DateTime value in the query parameters."
-        )]
-    [SwaggerOperation("QueryForNewDocuments")]
-    [SwaggerResponse(HttpStatusCode.OK, type: typeof (Task&lt;IList&lt;Document&gt;&gt;))]
-    [SwaggerResponse(HttpStatusCode.BadRequest, "The syntax of the SQL Statement is incoreect")]
-    [SwaggerResponse(HttpStatusCode.NotFound, "No Documents were found")]
-    [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Operation Error")]
-    // ReSharper disable once ConsiderUsingAsyncSuffix
-    public IList&lt;Document&gt; QueryForNewPatientDocuments(
-        [Metadata("UnixTimeStamp", "The DateTime value used to search from")] double unixTimeStamp)
-    {
-        var context = new DocumentDbContext();
-        var filterQuery = string.Format(InvariantCulture, "SELECT * FROM Patient p WHERE p._ts &gt;=  {0}",
-            unixTimeStamp);
-        var options = new FeedOptions {MaxItemCount = -1};
+<div class="highlight highlight-source-cs"><pre>
+        <span class="pl-c">/// &lt;<span class="pl-ent">summary</span>&gt;</span>
+        <span class="pl-c">///     Query for new Patient Documents</span>
+        <span class="pl-c">/// &lt;/<span class="pl-ent">summary</span>&gt;</span>
+        <span class="pl-c">/// &lt;<span class="pl-ent">param</span> <span class="pl-e">name</span>=<span class="pl-s"><span class="pl-pds">"</span>unixTimeStamp<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">param</span>&gt;</span>
+        <span class="pl-c">/// &lt;<span class="pl-ent">returns</span>&gt;IList&lt;/<span class="pl-ent">returns</span>&gt;</span>
+        [Metadata(<span class="pl-s"><span class="pl-pds">"</span>QueryForNewDocuments<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>Query for new Documents where the Timestamp is greater than or equal to the DateTime value in the query parameters.<span class="pl-pds">"</span></span>
+            )]
+        [SwaggerOperation(<span class="pl-s"><span class="pl-pds">"</span>QueryForNewDocuments<span class="pl-pds">"</span></span>)]
+        [SwaggerResponse(HttpStatusCode.OK, type: <span class="pl-k">typeof</span> (Task&lt;IList&lt;Document&gt;&gt;))]
+        [SwaggerResponse(HttpStatusCode.BadRequest, <span class="pl-s"><span class="pl-pds">"</span>The syntax of the SQL Statement is incoreect<span class="pl-pds">"</span></span>)]
+        [SwaggerResponse(HttpStatusCode.NotFound, <span class="pl-s"><span class="pl-pds">"</span>No Documents were found<span class="pl-pds">"</span></span>)]
+        [SwaggerResponse(HttpStatusCode.InternalServerError, <span class="pl-s"><span class="pl-pds">"</span>Internal Server Operation Error<span class="pl-pds">"</span></span>)]
+        <span class="pl-c">// ReSharper disable once ConsiderUsingAsyncSuffix</span>
+        <span class="pl-k">public</span> IList&lt;Document&gt; QueryForNewPatientDocuments(
+            [Metadata(<span class="pl-s"><span class="pl-pds">"</span>UnixTimeStamp<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>The DateTime value used to search from<span class="pl-pds">"</span></span>)] <span class="pl-k">double</span> unixTimeStamp)
+        {
+            <span class="pl-k">var</span> context = <span class="pl-k">new</span> DocumentDbContext();
+            <span class="pl-k">var</span> filterQuery = <span class="pl-k">string</span>.Format(InvariantCulture, <span class="pl-s"><span class="pl-pds">"</span>SELECT * FROM Patient p WHERE p._ts &gt;=  {0}<span class="pl-pds">"</span></span>,
+                unixTimeStamp);
+            <span class="pl-k">var</span> options = <span class="pl-k">new</span> FeedOptions {MaxItemCount = -<span class="pl-c1">1</span>};
 
 
-        var collectionLink = UriFactory.CreateDocumentCollectionUri(DocumentDbContext.DatabaseId,
-            DocumentDbContext.CollectionId);
+            <span class="pl-k">var</span> collectionLink = UriFactory.CreateDocumentCollectionUri(DocumentDbContext.DatabaseId,
+                DocumentDbContext.CollectionId);
 
-        var response =
-            context.Client.CreateDocumentQuery&lt;Document&gt;(collectionLink, filterQuery, options).AsEnumerable();
+            <span class="pl-k">var</span> response =
+                context.Client.CreateDocumentQuery&lt;Document&gt;(collectionLink, filterQuery, options).AsEnumerable();
 
-        return response.ToList();
-}
-</code></pre>
+            <span class="pl-k">return</span> response.ToList();
+    }
+</pre></div>
 
 <p>This operation uses the DocumentDB NET SDK to create a document query; </p>
 
-<pre><code> ``CreateDocumentQuery&lt;Document&gt;(collectionLink, filterQuery, options).AsEnumerable();
-</code></pre>
+<div class="highlight highlight-source-cs"><pre>     CreateDocumentQuery&lt;Document&gt;(collectionLink, filterQuery, options).AsEnumerable();</pre></div>
 
 <p>The response from the ConvertToTimeStamp operation (unixTimeStamp) is passed in.   The operation returns a List of documents. IList</p>
 
@@ -970,16 +1021,52 @@ public string GetUtcDate(
 
 <p>In Powershell, you call it as follows:  </p>
 
-<pre><code>ArmClient.exe post https://management.azure.com/subscriptions/[YOUR SUBSCRIPTION ID/resourcegroups/[YOUR RESOURCE GROUP]/providers/Microsoft.Logic/workflows/[YOUR LOGIC APP NAME/triggers/manual/listcallbackurl?api-version=2015-08-01-preview
-</code></pre>
+<div class="highlight highlight-source-powershell"><pre>
+    <span class="pl-c1">ArmClient.exe</span> post https:<span class="pl-k">//</span>management.azure.com<span class="pl-k">/</span>subscriptions<span class="pl-k">/</span><span class="pl-e">[YOUR</span> <span class="pl-e">SUBSCRIPTION</span> <span class="pl-e">ID</span><span class="pl-k">/</span><span class="pl-e">resourcegroups</span><span class="pl-k">/</span><span class="pl-e">[YOUR</span> <span class="pl-e">RESOURCE</span> <span class="pl-e">GROUP]</span><span class="pl-k">/</span><span class="pl-e">providers</span><span class="pl-k">/</span><span class="pl-e">Microsoft.Logic</span><span class="pl-k">/</span><span class="pl-e">workflows</span><span class="pl-k">/</span><span class="pl-e">[YOUR</span> <span class="pl-e">LOGIC</span> <span class="pl-e">APP</span> <span class="pl-e">NAME</span><span class="pl-k">/</span><span class="pl-e">triggers</span><span class="pl-k">/</span><span class="pl-e">manual</span><span class="pl-k">/</span><span class="pl-e">listcallbackurl</span>?<span class="pl-e">api</span><span class="pl-k">-</span><span class="pl-e">version</span><span class="pl-k">=</span><span class="pl-c1"><span class="pl-c1">2015</span></span><span class="pl-k">-</span><span class="pl-c1"><span class="pl-c1">08</span></span><span class="pl-k">-</span><span class="pl-c1"><span class="pl-c1">01</span></span><span class="pl-k">-</span><span class="pl-e">preview</span>
+</pre></div>
 
 <p>Your result should look like this:</p>
 
-<pre><code>``https://prod-02.westus.logic.azure.com:443/workflows/508ecbba4eec4f7689422c8d7a40fbac/triggers/manual/run?api-version=2015-08-01-prevaiew&amp;sp=%2Ftriggers%2Fmanual%2Frun&amp;sv=1.0&amp;sig=XXXXXXXXXXXXXXXXXXX
-</code></pre>
+<div class="highlight highlight-source-powershell"><pre>
+    https:<span class="pl-k">//</span>prod<span class="pl-k">-</span><span class="pl-c1"><span class="pl-c1">02</span></span>.westus.logic.azure.com:<span class="pl-c1"><span class="pl-c1">443</span></span><span class="pl-k">/</span>workflows<span class="pl-k">/</span>508ecbba4eec4f7689422c8d7a40fbac<span class="pl-k">/</span>triggers<span class="pl-k">/</span>manual<span class="pl-k">/</span>run?api<span class="pl-k">-</span>version<span class="pl-k">=</span><span class="pl-c1"><span class="pl-c1">2015</span></span><span class="pl-k">-</span><span class="pl-c1"><span class="pl-c1">08</span></span><span class="pl-k">-</span><span class="pl-c1"><span class="pl-c1">01</span></span><span class="pl-k">-</span>prevaiew<span class="pl-k">&amp;</span>sp<span class="pl-k">=%</span>2Ftriggers<span class="pl-k">%</span>2Fmanual<span class="pl-k">%</span>2Frun<span class="pl-k">&amp;</span>sv<span class="pl-k">=</span><span class="pl-c1"><span class="pl-c1">1.0</span></span><span class="pl-k">&amp;</span>sig<span class="pl-k">=</span>XXXXXXXXXXXXXXXXXXX
+</pre></div>
 
-<p>You can use a tool like <a href="http://www.getpostman.com/">postman</a> to test you main Logic App as shown in the following figure.
-<img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/Postman.png" alt=""></p>
+<p>You can use a tool like <a href="http://www.getpostman.com/">postman</a> to test you main Logic App as shown in the following figure.</p>
+
+<p><img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/NewPostman.png" alt="Postman"></p>
+
+<p>The following table lists the Trigger parameters that make up the body of the DocDB Trigger Logic App</p>
+
+<pre></pre><table>
+  <tr>
+    <th>Parameter</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>GetUtcDate_HoursBack</td>
+    <td>Used to set the number of hours for the search start date </td>
+  </tr>
+  <tr>
+    <td>sendgridUsername</td>
+    <td>The user name for Send Grid email</td>
+  </tr>
+  <tr>
+    <td>sendgridPassword</td>
+    <td>The password fr the Send Grid email</td>
+  </tr>
+  <tr>
+    <td>EmailTo</td>
+    <td>The email address that will receive the email notification </td>
+  </tr>
+    <tr>
+    <td>Subject</td>
+    <td>The Subject for the email</td>
+  </tr>
+  </table>
+
+  
+
+<hr>
 
 <h2>
 <a id="summary" class="anchor" href="#summary" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Summary</h2>
@@ -987,11 +1074,19 @@ public string GetUtcDate(
 <ul>
 <li>You have learned that it is possible, to implement Notifications in DocumentDB.</li>
 <li>You discovered that by using Logic Apps, you can automate the process.</li>
+<li>By using Logic Apps, you can reduce the time it takes to deliver an application.</li>
 <li>By using Http you can easy consume an API App within a Logic App.</li>
 <li>How easy it is to create a CallBackURL that replaces the Http Listener.</li>
 <li>How easy it is too create custom workflows with Logic Apps Designer</li>
 <li>The key is to plan ahead and model your workflow.</li>
 </ul>
+
+<hr>
+
+<p>Copyright © 2016 Howard S. Edidin </p>
+
+<p>Version 1.0.0
+Modified: 2/28/2016 1:35:17 PM </p>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/HEDIDIN/DocDbNotifications">Notifications for new or modified DocumentDB Resources</a> is maintained by <a href="https://github.com/HEDIDIN">HEDIDIN</a>.</span>
