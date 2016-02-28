@@ -65,18 +65,24 @@ There are several Collections within the Patient database; Clinical, Identificat
 
 <p>If you look at the following figure there are several steps in the workflow.</p>
 
-<p><img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/Main%20Logic%20App%20process.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/Main%20Logic%20App%20process.png" alt="Main Logic Process"></p>
 
 <p>These steps are as follows.
-1. You need to get the current UTC DateTime from an API App.  The default value is one hour previous.
-1. Then it’s converted to a Unix Timestamp format. This is the default format for timestamps in DocumentDB.
-1. You POST the value to an API App, which does a DocumentDB query. The value is used in a query. ``“SELECT * FROM Patients p WHERE (p._ts &gt;= <a href="https://github.com/value" class="user-mention">@value</a>)”</p>
+1. You need to get the current UTC DateTime from an API App.  The default value is one hour previous.</p>
+
+<ol>
+<li><p>Then it’s converted to a Unix Timestamp format. This is the default format for timestamps in DocumentDB.</p></li>
+<li><p>You POST the value to an API App, which does a DocumentDB query. The value is used in a query. ``“SELECT * FROM Patients p WHERE (p._ts &gt;= <a href="https://github.com/value" class="user-mention">@value</a>)”</p></li>
+</ol>
 
 <blockquote>
-<p>NOTE: The _ts represents the TimeStamp metadata for all DocumentDB resources.
-1. If there are documents found, the response body is sent to you Google Drive.
-1. Finally, an email is sent that notifies the recipient of the number of documents found. If no documents were found, the email body would be “0 Documents Found”. </p>
+<p>NOTE: The _ts represents the TimeStamp metadata for all DocumentDB resources.</p>
 </blockquote>
+
+<ol>
+<li><p>If there are documents found, the response body is sent to you Google Drive</p></li>
+<li><p>Finally, an email is sent that notifies the recipient of the number of documents found. If no documents were found, the email body would be “0 Documents Found”. </p></li>
+</ol>
 
 <p>Now that you have an idea of what the workflow does, let’s take a look at how you implement it.</p>
 
