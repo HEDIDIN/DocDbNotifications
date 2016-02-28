@@ -65,7 +65,7 @@ There are several Collections within the Patient database; Clinical, Identificat
 
 <p>If you look at the following figure there are several steps in the workflow.</p>
 
-<p><img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/Main%20Logic%20App%20process.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/Main%20Logic%20App%20process.png" alt=""></p>
 
 <p>These steps are as follows.
 1. You need to get the current UTC DateTime from an API App.  The default value is one hour previous.
@@ -86,22 +86,22 @@ There are several Collections within the Patient database; Clinical, Identificat
 <p>When you create a new Logic App, your are presented with “How would you like to start?” 
 When you click inside the text box,  you have a choice of events. For this Logic App, you select “Manual – When a HTTP request is received” as shown below.</p>
 
-<p><img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/starting.off.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/starting.off.png" alt=""></p>
 
 <h3>
 <a id="design-view-of-your-completed-logic-app" class="anchor" href="#design-view-of-your-completed-logic-app" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Design View of your completed Logic App</h3>
 
 <p>The following figure show the design view for the Logic App, which is named DocDB.</p>
 
-<p><img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/LogicApp.Workflow.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/LogicApp.Workflow.png" alt=""></p>
 
 <p>When editing the actions in the Logic App Designer, you have the option of selecting *<em>Outputs *</em>from the Http Request or from the previous action as shown in the sendMail action below.</p>
 
-<p><img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/choose.outputs.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/choose.outputs.png" alt=""></p>
 
 <p>Before each action in your workflow,  you can make a decision; ** Add an action *<em>or *</em>Add a condition **as shown in the following figure.</p>
 
-<p><img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/add.action.or.condition.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/add.action.or.condition.png" alt=""></p>
 
 <p>If you select <strong>Add a condition</strong>, you are presented with a form, as shown in the following figure, to enter your logic.  This is in essence, a business rule.  If you click inside a field, you have a choice of selecting parameters from the previous action.  You can also enter the values directly.</p>
 
@@ -289,7 +289,7 @@ To fire your trigger, you will need a CallbackURL.  You will learn how to genera
 <a id="getutcdate" class="anchor" href="#getutcdate" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>GetUTCDate</h3>
 
 <p>Designer View
-<img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/getutcdate.png" alt=""></p>
+<img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/getutcdate.png" alt=""></p>
 
 <p><strong>Code View</strong></p>
 
@@ -349,7 +349,7 @@ To fire your trigger, you will need a CallbackURL.  You will learn how to genera
 <a id="conversion" class="anchor" href="#conversion" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Conversion</h3>
 
 <p>Designer View
-<img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/Conversion.png" alt=""></p>
+<img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/Conversion.png" alt=""></p>
 
 <p>Code View</p>
 
@@ -413,7 +413,7 @@ To fire your trigger, you will need a CallbackURL.  You will learn how to genera
 <a id="getdocuments" class="anchor" href="#getdocuments" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>GetDocuments</h3>
 
 <p>Designer View
-<img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/GetDocuments.png" alt=""></p>
+<img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/GetDocuments.png" alt=""></p>
 
 <p>Code View</p>
 
@@ -522,7 +522,7 @@ To fire your trigger, you will need a CallbackURL.  You will learn how to genera
 <a id="create-file" class="anchor" href="#create-file" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Create File</h3>
 
 <p>Designer View
-<img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/CreateFile.png" alt=""></p>
+<img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/CreateFile.png" alt=""></p>
 
 <p>Code View</p>
 
@@ -617,7 +617,7 @@ To fire your trigger, you will need a CallbackURL.  You will learn how to genera
 <a id="sendemail" class="anchor" href="#sendemail" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>sendEmail</h3>
 
 <p>Designer View
-<img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/SendEmail.png" alt=""></p>
+<img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/SendEmail.png" alt=""></p>
 
 <p>Code View</p>
 
@@ -715,7 +715,7 @@ To fire your trigger, you will need a CallbackURL.  You will learn how to genera
 </code></pre>
 
 <p>This returns the same value that is sent in the email body. The following figure shows an example where “37 Records Found”
-<img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/Logic.App.run.png" alt=""></p>
+<img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/Logic.App.run.png" alt=""></p>
 
 <h2>
 <a id="metrics" class="anchor" href="#metrics" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Metrics</h2>
@@ -729,7 +729,7 @@ To fire your trigger, you will need a CallbackURL.  You will learn how to genera
 <p>This Logic App is the trigger that starts the workflow on your main Logic App.</p>
 
 <p>The following figure shows the Designer View.
-<img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/Trigger.Recurrence.png" alt=""></p>
+<img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/Trigger.Recurrence.png" alt=""></p>
 
 <pre><code>{
     "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2015-08-01-preview/workflowdefinition.json#",
@@ -829,19 +829,19 @@ The body contains the parameters that are specified in the JSON Schema. </p>
 <p>NOTE: To allow you to call the operations externally, you need to add a CORS allowed origin value of “*” (without quotes) in the settings of your API App as shown in the following figure.</p>
 </blockquote>
 
-<p><img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/Cors.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/Cors.png" alt=""></p>
 
 <p><strong>GetUtcDate</strong></p>
 
-<p><img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/getutcdateswagger.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/getutcdateswagger.png" alt=""></p>
 
 <p><strong>ConvertToTimeStamp</strong></p>
 
-<p><img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/converion%20swagger.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/converion%20swagger.png" alt=""></p>
 
 <p><strong>QueryForNewPatientDocuments</strong></p>
 
-<p><img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/patientswagger.png" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/patientswagger.png" alt=""></p>
 
 <p>Let’s take a look at the code behind this operations</p>
 
@@ -972,11 +972,7 @@ public string GetUtcDate(
 </code></pre>
 
 <p>You can use a tool like <a href="http://www.getpostman.com/">postman</a> to test you main Logic App as shown in the following figure.
-<img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/Postman.png" alt=""></p>
-
-<p>If you get an error connecting, check your CORS setting for your API App. For testing be sure to set  CORS allowed origins to “0”
-The following figure is an example:
-<img src="https://github.com/HEDIDIN/DocDbNotifications/blob/master/Images/Cors.png" alt=""></p>
+<img src="https://raw.githubusercontent.com/HEDIDIN/DocDbNotifications/master/Images/Postman.png" alt=""></p>
 
 <h2>
 <a id="summary" class="anchor" href="#summary" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Summary</h2>
