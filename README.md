@@ -7,4 +7,5 @@ This article came about from a question I once saw posted.  The question was “
 
 I have worked with BizTalk Server for many years, and this is a very common scenario when using the [WCF LOB Adapter](https://msdn.microsoft.com/en-us/library/bb798128.aspx) .  So I decided to see if I could duplicate this functionality in DocumentDB for new and/ or modified documents. 
 
-
+Tutorial:
+//http://hedidin.github.io/DocDbNotifications/
