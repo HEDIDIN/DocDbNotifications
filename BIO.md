@@ -1,6 +1,7 @@
 #### About the author
 
 Howard S. Edidin is an Azure Solution Architect specializing in Enterprise Healthcare using BizTalk Server and Azure. 
+Howard is a MVP on the Data Platform.
 
 He recently joined [VNB Consulting](http://www.vnbconsulting.com), a Microsoft Gold Partner. He is certified as Microsoft Certified Technical Specialist (MCTS) in BizTalk Server 2010 and is also a Gold Member of the HL7 Organization. He is a Microsoft Virtual Technical Specialist (BizTalk, Azure) for Healthcare (P-TSP) and a member of the Azure Advisory Group.
 
